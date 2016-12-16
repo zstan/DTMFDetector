@@ -1,0 +1,143 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jcodec</groupId>
+	<artifactId>jcodec</artifactId>
+	<name>JCodec</name>
+	<url>http://jcodec.org</url>
+	<packaging>jar</packaging>
+	<version>0.2.0</version>
+	<description>Pure Java implementation of video/audio codecs and formats</description>
+	<licenses>
+		<license>
+			<name>FreeBSD</name>
+			<url>http://jcodec.org/lic.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git://github.com/jcodec/jcodec.git</connection>
+		<developerConnection>scm:https://github.com/jcodec/jcodec.git</developerConnection>
+		<url>http://git.jcodec.org</url>
+	</scm>
+	<developers>
+		<developer>
+			<name>Jay Codec</name>
+			<email>jcodecproject@gmail.com</email>
+		</developer>
+	</developers>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</testResource>
+		</testResources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>2.0</version>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<descriptors>
+						<descriptor>uberjar.xml</descriptor>
+					</descriptors>
+					<finalName>jcodec-${project.version}</finalName>
+					<outputDirectory>target</outputDirectory>
+					<workDirectory>target/assembly/work</workDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<templateDirectory>src/site</templateDirectory>
+					<template>site.vm</template>
+				</configuration>
+			</plugin>
+			<!-- plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>findbugs-maven-plugin</artifactId> 
+				<version>2.5.2</version> <configuration> <effort>Max</effort> <threshold>Max</threshold> 
+				<failOnError>false</failOnError> <xmlOutput>false</xmlOutput> <findbugsXmlOutputDirectory>${project.build.directory}/findbugs</findbugsXmlOutputDirectory> 
+				</configuration> <executions> <execution> <id>analyze-compile</id> <phase>compile</phase> 
+				<goals> <goal>check</goal> </goals> </execution> </executions> </plugin -->
+		</plugins>
+	</build>
+	<dependencies>
+<!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/tritonus-share -->
+<dependency>
+    <groupId>com.googlecode.soundlibs</groupId>
+    <artifactId>tritonus-share</artifactId>
+    <version>0.3.7-1</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/javazoom/jlayer -->
+<dependency>
+    <groupId>javazoom</groupId>
+    <artifactId>jlayer</artifactId>
+    <version>1.0.1</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi -->
+<dependency>
+    <groupId>com.googlecode.soundlibs</groupId>
+    <artifactId>mp3spi</artifactId>
+    <version>1.9.5-1</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-math3</artifactId>
+    <version>3.6.1</version>
+</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
