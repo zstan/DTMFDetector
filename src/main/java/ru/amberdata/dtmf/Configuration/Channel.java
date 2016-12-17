@@ -1,4 +1,4 @@
-package ru.amberdata.dtmf.Configuration;
+package ru.amberdata.dtmf.configuration;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
@@ -15,11 +15,11 @@ public class Channel {
     private String AudioPID;
     private String AudioFormat;
     private DTMFChannel dtmfChannel;
-    private List<AdBreak> breaks = new ArrayList<>();
+    private List<AdBreak> adBreak = new ArrayList<>();
 
     @XmlElement(required=true)
-    public List<AdBreak> getBreaks() {
-        return breaks;
+    public List<AdBreak> getAdBreak() {
+        return adBreak;
     }
 
     @XmlElement(required=true)
@@ -76,8 +76,8 @@ public class Channel {
         this.dtmfChannel = DTMFChannel;
     }
 
-    public void setBreaks(List<AdBreak> action) {
-        this.breaks = action;
+    public void setAdBreak(List<AdBreak> action) {
+        this.adBreak = action;
     }
 }
 

@@ -3,6 +3,8 @@ package ru.amberdata.dtmf;
 import com.tino1b2be.audio.AudioFileException;
 import com.tino1b2be.dtmfdecoder.DTMFDecoderException;
 import com.tino1b2be.dtmfdecoder.DTMFUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -13,6 +15,7 @@ import java.io.InputStream;
  */
 public class DTMFDetector implements Runnable {
 
+    private static final Logger logger = LogManager.getLogger(DTMFDetector.class);
     private InputStream source;
 
     public DTMFDetector(InputStream in) {
@@ -21,11 +24,12 @@ public class DTMFDetector implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("DTMFDetector initialize");
+        logger.info("DTMFDetector initialize");
         try {
             DTMFUtil dtmf = new DTMFUtil(source);
+            DTMFUtil.setMinToneDuration(70);
+            logger.info("DTMFDetector start decode");
             dtmf.decode();
-            System.out.println("DTMFDetector start decode");
             String[] sequence = dtmf.getDecoded();
 
             if (dtmf.getChannelCount() == 1) {
@@ -38,6 +42,6 @@ public class DTMFDetector implements Runnable {
         } catch (IOException | UnsupportedAudioFileException | AudioFileException | DTMFDecoderException e) {
             e.printStackTrace();
         }
-        System.out.println("DTMFDetector close");
+        logger.info("DTMFDetector close");
     }
 }

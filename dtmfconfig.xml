@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dtmfDetectorConfig>
+    <channel>
+        <adBreak>
+            <cueTone>
+                <pauseLength>70</pauseLength>
+                <startSymbols>1234</startSymbols>
+                <stopSymbols>89</stopSymbols>
+                <symbolLength>70</symbolLength>
+            </cueTone>
+        </adBreak>
+        <adBreak>
+            <cueTone>
+                <pauseLength>70</pauseLength>
+                <startSymbols>123</startSymbols>
+                <stopSymbols>78</stopSymbols>
+                <symbolLength>70</symbolLength>
+            </cueTone>
+        </adBreak>
+        <audioFormat>MPEG</audioFormat>
+        <audioPID>68</audioPID>
+        <dtmfChannel>auto</dtmfChannel>
+        <name>ch name 1</name>
+        <networkInterface>eth1</networkInterface>
+        <streamAddress>127.0.0.1:1234</streamAddress>
+    </channel>
+    <demoMode>true</demoMode>
+</dtmfDetectorConfig>

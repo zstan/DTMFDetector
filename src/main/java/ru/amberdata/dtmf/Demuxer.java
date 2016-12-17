@@ -1,7 +1,8 @@
 package ru.amberdata.dtmf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.FileChannelWrapper;
-import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Packet;
 import org.jcodec.containers.mps.MPEGDemuxer;
@@ -20,6 +21,7 @@ import java.util.Set;
 public class Demuxer implements Runnable {
 
     private SeekableByteChannel source;
+    private static final Logger logger = LogManager.getLogger(Demuxer.class);
 
     public Demuxer (SeekableByteChannel in) {
         this.source = in;
@@ -29,32 +31,32 @@ public class Demuxer implements Runnable {
     public void run() {
         try {
             Set<Integer> programs = MTSDemuxer.getProgramsFromChannel(source);
-            System.out.println("programs found: ");
+            logger.info("programs found: ");
             programs.forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("empty programs list from stream");
+            logger.error("empty programs list from stream");
             return;
         }
 
         MTSDemuxer demuxer = null;
         try {
             int program = 69; // 69 win 68 lin !!!
-            System.out.println("curr program: " + program);
+            logger.info("curr program: " + program);
             demuxer = new MTSDemuxer(source, program); // +
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("can`t initialise Demuxer with chosen program");
+            logger.error("can`t initialise Demuxer with chosen program");
             return;
         }
 
         List<? extends MPEGDemuxer.MPEGDemuxerTrack> at = demuxer.getAudioTracks();
-        System.out.println("found " + at.size() + " audio tracks");
+        logger.info("found " + at.size() + " audio tracks");
         MPEGDemuxer.MPEGDemuxerTrack demuxerTrack = at.get(0);
-        System.out.println("audio codec detected: " + demuxerTrack.getMeta().getCodec());
-        System.out.println("duration: " + demuxerTrack.getMeta().getTotalDuration());
-        System.out.println("frames: " + demuxerTrack.getMeta().getTotalFrames());
-        System.out.println("aspect ratio: " + demuxerTrack.getMeta().getPixelAspectRatio());
+        logger.info("audio codec detected: " + demuxerTrack.getMeta().getCodec());
+        logger.info("duration: " + demuxerTrack.getMeta().getTotalDuration());
+        logger.info("frames: " + demuxerTrack.getMeta().getTotalFrames());
+        logger.info("aspect ratio: " + demuxerTrack.getMeta().getPixelAspectRatio());
 
         FileChannelWrapper fos;
         try {
@@ -70,7 +72,6 @@ public class Demuxer implements Runnable {
 
             try {
                 while (true) {
-                    //buf.clear();
                     Packet inFrame = demuxerTrack.nextFrame(buf);
                     if (inFrame != null) {
                         ByteBuffer data = inFrame.getData();
@@ -80,7 +81,7 @@ public class Demuxer implements Runnable {
                         pipedChannel.write(data);
                     } else {
                         Thread.sleep(200);
-                        System.out.println("sleep source.size: " + source.size() + " source.position: " + source.position());
+                        logger.info("sleep source.size: " + source.size() + " source.position: " + source.position());
                     }
                 }
             } catch (IOException | InterruptedException e) {
@@ -88,10 +89,10 @@ public class Demuxer implements Runnable {
             }
             pipedChannel.close();
             dtmfDetectorThread.interrupt();
-            System.out.println("close " + Thread.currentThread().getName());
+            logger.info("close " + Thread.currentThread().getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("exit");
+        logger.info("exit");
     }
 }
