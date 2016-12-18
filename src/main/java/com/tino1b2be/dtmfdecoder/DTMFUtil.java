@@ -63,7 +63,7 @@ public class DTMFUtil {
 	public static boolean goertzel = false;
 
 	private static final double CUT_OFF_POWER = 0.004;
-	private static final double FFT_CUT_OFF_POWER_NOISE_RATIO = 0.50;//0.46;
+	private double FftCutoffPowerNoiseRatio = 0.50;//0.46;
 	private static final double FFT_FRAME_DURATION = 0.030;
 	private static final double GOERTZEL_CUT_OFF_POWER_NOISE_RATIO = 0.87;
 	private static final double GOERTZEL_FRAME_DURATION = 0.045;
@@ -73,10 +73,13 @@ public class DTMFUtil {
 	private static boolean decode80 = false;
 	private static boolean decode100 = false;
 
+	private String startLabel = "";
+	private String stopLabel = "";
+
 	private boolean decoder = false;
 	private boolean generate = false;
 
-	private String seq[];
+	private String seq[] = {"", ""};
 	private AudioFile audio;
 	private int frameSize;
 
@@ -141,9 +144,6 @@ public class DTMFUtil {
 		setFrameSize();
 		setCentreIndicies();
 		this.decoded = false;
-		seq = new String[2];
-		this.seq[0] = "";
-		this.seq[1] = "";
 	}
 
 	/**
@@ -164,9 +164,6 @@ public class DTMFUtil {
 		setFrameSize();
 		setCentreIndicies();
 		this.decoded = false;
-		seq = new String[2];
-		this.seq[0] = "";
-		this.seq[1] = "";
 	}
 
 	/**
@@ -183,9 +180,6 @@ public class DTMFUtil {
 		if (!goertzel)
 			setCentreIndicies();
 		this.decoded = false;
-		seq = new String[2];
-		this.seq[0] = "";
-		this.seq[1] = "";
 	}
 
 	/**
@@ -207,9 +201,6 @@ public class DTMFUtil {
 		if (!goertzel)
 			setCentreIndicies();
 		this.decoded = false;
-		seq = new String[2];
-		this.seq[0] = "";
-		this.seq[1] = "";
 	}
 
 	public DTMFUtil(InputStream stream) throws IOException, UnsupportedAudioFileException, DTMFDecoderException {
@@ -219,9 +210,6 @@ public class DTMFUtil {
 		if (!goertzel)
 			setCentreIndicies();
 		this.decoded = false;
-		seq = new String[2];
-		this.seq[0] = "";
-		this.seq[1] = "";
 	}
 
 	/**
@@ -243,9 +231,6 @@ public class DTMFUtil {
 		if (!goertzel)
 			setCentreIndicies();
 		this.decoded = false;
-		seq = new String[2];
-		this.seq[0] = "";
-		this.seq[1] = "";
 	}
 
 	public DTMFUtil(File file, char[] chars, int fs, int toneDurr, int pauseDurr) throws DTMFDecoderException {
@@ -513,7 +498,7 @@ public class DTMFUtil {
 		// ratio = (max(lower freqs) + max(higher freqs))/sum(all freqs in
 		// spectrum)
 		return ((temp1[temp1.length - 1] + temp2[temp2.length - 1])
-				/ DecoderUtil.sumArray(power_spectrum)) < FFT_CUT_OFF_POWER_NOISE_RATIO;
+				/ DecoderUtil.sumArray(power_spectrum)) < FftCutoffPowerNoiseRatio;
 	}
 
 	private boolean isNoisyG(double[] dft_data) {
@@ -921,6 +906,7 @@ public class DTMFUtil {
 					if (curr[1] != prev3[1]) {
 						seq2[1] += curr[1];
                         System.out.println(seq2[1] + " " + decodeCount);
+						seq2[1] = labelReact(seq2[1]);
 					}
 				}
 			}
@@ -1518,5 +1504,36 @@ public class DTMFUtil {
 			return generatedSeq;
 		else
 			throw new DTMFDecoderException("Samples have not been generated yet. Please run generate() first.");
+	}
+
+	public void setFftCutoffPowerNoiseRatio(double val) {
+		FftCutoffPowerNoiseRatio = val;
+	}
+
+	public String getStartLabel() {
+		return startLabel;
+	}
+
+	public void setStartLabel(String startLabel) {
+		this.startLabel = startLabel;
+	}
+
+	public String getStopLabel() {
+		return stopLabel;
+	}
+
+	public void setStopLabel(String endLabel) {
+		this.stopLabel = endLabel;
+	}
+
+	private String labelReact(String label) {
+		if (label.equals(getStartLabel())) {
+			System.out.println("start label found: " + getStartLabel() + ", call some callback...");
+			return "";
+		} else if (label.equals(getStopLabel())) {
+			System.out.println("stop label found: " + getStopLabel() + "call some callback...");
+			return "";
+		}
+		return label;
 	}
 }

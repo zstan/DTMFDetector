@@ -35,9 +35,9 @@ import javax.xml.bind.annotation.XmlRootElement;
         </adBreak>
         <audioFormat>MPEG</audioFormat>
         <audioPID>68</audioPID>
+        <cutoffNoiseRatio>0.46</cutoffNoiseRatio>
         <dtmfChannel>auto</dtmfChannel>
         <name>ch name 1</name>
-        <networkInterface>eth1</networkInterface>
         <streamAddress>127.0.0.1:1234</streamAddress>
     </channel>
     <demoMode>true</demoMode>
@@ -75,9 +75,9 @@ public class DTMFDetectorConfig {
         Channel ch1 = new Channel();
         ch1.setName("ch name 1");
         ch1.setAudioFormat("MPEG");
-        ch1.setAudioPID("68");
+        ch1.setAudioPID(68);
+        ch1.setCutoffNoiseRatio(0.46);
         ch1.setDtmfChannel(DTMFChannel.auto);
-        ch1.setNetworkInterface("eth1");
         ch1.setStreamAddress("127.0.0.1:1234");
 
         AdBreak ad1 = new AdBreak();

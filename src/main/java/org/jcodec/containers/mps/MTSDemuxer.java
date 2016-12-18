@@ -140,7 +140,7 @@ public class MTSDemuxer implements MPEGDemuxer {
                 long fcount = 0;
 
                 PipedOutputStream pOut = new PipedOutputStream();
-                PipedInputStream pipedInputStream = new PipedInputStream(pOut, 18800000);
+                PipedInputStream pipedInputStream = new PipedInputStream(pOut, 1024*1024);
                 WritableByteChannel channel = Channels.newChannel (pOut);
 
                 Thread thread1 = new Thread(new Run0(pipedInputStream));

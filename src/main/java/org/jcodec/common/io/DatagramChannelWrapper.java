@@ -15,29 +15,8 @@ public class DatagramChannelWrapper implements SeekableByteChannel {
     private DatagramChannel ch;
     private long position = 0;
 
-    private void createTimerNotificationEvent() {
-        final int TIMER_INTERVAL_SEC = 5;
-        final long[] oldPosition = {0};
-        new Timer(TIMER_INTERVAL_SEC * 1000, new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent arg0) {
-                if (position > 0 && oldPosition[0] == position) {
-                    System.out.println("close socket, no activity found");
-                    if (ch != null)
-                        try {
-                            ch.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                } else
-                    oldPosition[0] = position;
-            }
-        }).start();
-    }
-
     public DatagramChannelWrapper(DatagramChannel ch) {
         this.ch = ch;
-        createTimerNotificationEvent();
     }
 
     @Override
@@ -68,11 +47,9 @@ public class DatagramChannelWrapper implements SeekableByteChannel {
     public int read(ByteBuffer dst) throws IOException {
         dst.clear();
         ch.receive(dst);
-        //System.out.println("read! " + dst.remaining() + " " + dst.hasRemaining());
         int rem = dst.remaining();
         //dst.flip();
         position += dst.position();
-        //System.out.println("read! " + dst.position() + " " + rem);
 
         return dst.position() > 0? rem : -1;
         //return dst.position();

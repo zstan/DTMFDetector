@@ -25,6 +25,20 @@ public class Main {
 
     private static final Logger logger = LogManager.getLogger(Main.class);
 
+    private static InetSocketAddress initializeAddress(String addr) throws Exception {
+        int port = -1;
+        InetSocketAddress iAddr;
+        try {
+            port = Integer.parseInt(addr);
+            return new InetSocketAddress(port);
+        } catch (NumberFormatException e) {
+            String[] hostPort = addr.split(":");
+            if (hostPort.length != 2)
+                throw new Exception ("unacceptable streamAddress param: " + addr);
+            return new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1]));
+        }
+    }
+
     public static void main(String[] args) throws Exception {
 
         InputStream instream =
@@ -38,18 +52,7 @@ public class Main {
 
         for (Channel ch : context.dtmfConfig.getChannel()) {
             DatagramChannel datagramChannel = DatagramChannel.open();
-            String addr = ch.getStreamAddress();
-            int port = -1;
-            InetSocketAddress iAddr;
-            try {
-                port = Integer.parseInt(addr);
-                iAddr = new InetSocketAddress(port);
-            } catch (NumberFormatException e) {
-                String[] hostPort = addr.split(":");
-                if (hostPort.length != 2)
-                    throw new Exception ("unacceptable streamAddress param: " + addr);
-                iAddr  = new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1]));
-            }
+            InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
             datagramChannel.socket().bind(iAddr);
@@ -61,7 +64,7 @@ public class Main {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18800000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream)));
+            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), ch));
             demuxerThread.start();
 
             while (source.read(buf) != -1) {

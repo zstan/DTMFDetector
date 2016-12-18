@@ -10,11 +10,11 @@ import java.util.List;
 public class Channel {
 
     private String name;
-    private String networkInterface;
     private String streamAddress;
-    private String AudioPID;
+    private Integer AudioPID;
     private String AudioFormat;
     private DTMFChannel dtmfChannel;
+    private Double cutoffNoiseRatio = -1.;
     private List<AdBreak> adBreak = new ArrayList<>();
 
     @XmlElement(required=true)
@@ -33,18 +33,13 @@ public class Channel {
     }
 
     @XmlElement(required=true)
-    public String getAudioPID() {
+    public Integer getAudioPID() {
         return AudioPID;
     }
 
     @XmlElement(required=true)
     public String getStreamAddress() {
         return streamAddress;
-    }
-
-    @XmlElement(required=true)
-    public String getNetworkInterface() {
-        return networkInterface;
     }
 
     @XmlElement(required=true)
@@ -56,15 +51,11 @@ public class Channel {
         this.name = name;
     }
 
-    public void setNetworkInterface(String networkInterface) {
-        this.networkInterface = networkInterface;
-    }
-
     public void setStreamAddress(String streamAddress) {
         this.streamAddress = streamAddress;
     }
 
-    public void setAudioPID(String audioPID) {
+    public void setAudioPID(Integer audioPID) {
         AudioPID = audioPID;
     }
 
@@ -79,65 +70,17 @@ public class Channel {
     public void setAdBreak(List<AdBreak> action) {
         this.adBreak = action;
     }
+
+    @XmlElement
+    public Double getCutoffNoiseRatio() {
+        return cutoffNoiseRatio;
+    }
+
+    public void setCutoffNoiseRatio(Double cutoffNoiseRatio) {
+        this.cutoffNoiseRatio = cutoffNoiseRatio;
+    }
 }
 
 enum DTMFChannel {
     auto, left, right, mono;
-}
-
-class AdBreak {
-    private CueTone cueTone;
-
-    @XmlElement(required=true)
-    public CueTone getCueTone() {
-        return cueTone;
-    }
-
-    public void setCueTone(CueTone cueTone) {
-        this.cueTone = cueTone;
-    }
-}
-
-class CueTone {
-
-    private String stopSymbols;
-    private String startSymbols;
-    private Integer symbolLength;
-    private Integer pauseLength;
-
-    public String getStopSymbols() {
-        return stopSymbols;
-    }
-
-    @XmlElement(required=true)
-    public void setStopSymbols(String stopSymbols) {
-        this.stopSymbols = stopSymbols;
-    }
-
-    @XmlElement(required=true)
-    public String getStartSymbols() {
-        return startSymbols;
-    }
-
-    public void setStartSymbols(String startSymbols) {
-        this.startSymbols = startSymbols;
-    }
-
-    @XmlElement
-    public Integer getSymbolLength() {
-        return symbolLength;
-    }
-
-    public void setSymbolLength(Integer symbolLength) {
-        this.symbolLength = symbolLength;
-    }
-
-    @XmlElement
-    public Integer getPauseLength() {
-        return pauseLength;
-    }
-
-    public void setPauseLength(Integer pauseLength) {
-        this.pauseLength = pauseLength;
-    }
 }

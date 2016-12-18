@@ -7,6 +7,7 @@ import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Packet;
 import org.jcodec.containers.mps.MPEGDemuxer;
 import org.jcodec.containers.mps.MTSDemuxer;
+import ru.amberdata.dtmf.configuration.Channel;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -20,18 +21,21 @@ import java.util.Set;
  */
 public class Demuxer implements Runnable {
 
-    private SeekableByteChannel source;
+    private final SeekableByteChannel source;
+    private final Channel ch;
     private static final Logger logger = LogManager.getLogger(Demuxer.class);
 
-    public Demuxer (SeekableByteChannel in) {
+    public Demuxer (SeekableByteChannel in, Channel ch) {
         this.source = in;
+        this.ch = ch;
     }
 
     @Override
     public void run() {
+        Set<Integer> programs;
         try {
-            Set<Integer> programs = MTSDemuxer.getProgramsFromChannel(source);
-            logger.info("programs found: ");
+            programs = MTSDemuxer.getProgramsFromChannel(source);
+            logger.info("programs pid found: ");
             programs.forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,12 +45,15 @@ public class Demuxer implements Runnable {
 
         MTSDemuxer demuxer = null;
         try {
-            int program = 69; // 69 win 68 lin !!!
-            logger.info("curr program: " + program);
-            demuxer = new MTSDemuxer(source, program); // +
+            if (programs.contains(ch.getAudioPID())) {
+                logger.info("curr audio pid: " + ch.getAudioPID());
+                demuxer = new MTSDemuxer(source, ch.getAudioPID());
+            } else {
+                logger.error("chosen audio pid not found: " + ch.getAudioPID());
+                return;
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("can`t initialise Demuxer with chosen program");
+            logger.error("can`t initialise Demuxer with chosen audio pid");
             return;
         }
 
@@ -64,7 +71,7 @@ public class Demuxer implements Runnable {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream));
+            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, ch));
             dtmfDetectorThread.start();
 
             long fcount = 0;
@@ -72,6 +79,7 @@ public class Demuxer implements Runnable {
 
             try {
                 while (true) {
+                    buf.clear();
                     Packet inFrame = demuxerTrack.nextFrame(buf);
                     if (inFrame != null) {
                         ByteBuffer data = inFrame.getData();

@@ -39,8 +39,9 @@ public class MP3Decoder
 	public MP3Decoder( InputStream stream ) throws UnsupportedAudioFileException, IOException
 	{
 		pipedStream = stream;
-		InputStream in = new BufferedInputStream( stream, 1024*1024 );
-		this.setIn(new MP3AudioFileReader( ).getAudioInputStream( in ));
+		//InputStream in = new BufferedInputStream( stream, 1024*1024 );
+		//this.setIn(new MP3AudioFileReader( ).getAudioInputStream( in ));
+		this.setIn(new MP3AudioFileReader( ).getAudioInputStream( stream ));
 		AudioFormat baseFormat = this.getIn().getFormat();
 		System.out.println("sample rate: " + baseFormat.getSampleRate());
 		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
@@ -98,7 +99,7 @@ public class MP3Decoder
 		return buffer.getSampleCount();
 	}
 	
-	public int readSamples(double[][] samples) 
+	public int readSamples(double[][] samples)
 	{
 		if( buffer == null || buffer.getSampleCount() < samples.length )
 		{
@@ -110,11 +111,21 @@ public class MP3Decoder
 		int readBytes = 0;
 		try {
 			//System.out.println("available() sleep " + pipedStream.available());
-			while (pipedStream.available() < 500) {// todo: zstan
-				Thread.sleep(100);
-				//System.out.println(".available() sleep");
+			if (pipedStream.available() < 6000) {// todo: zstan
+				Thread.sleep(400);
+				int tt = bytes.length - read;
+				//System.out.println(".available() sleep " + getIn().available() + " off " + read + " len " + tt);
 			}
-			readBytes = getIn().read( bytes, read, bytes.length - read );
+			/*try {
+				int tt = bytes.length - read;
+				System.out.println(".available: " + getIn().available() + " avail2: " + pipedStream.available() + " off " + read + " len " + tt);
+				readBytes = getIn().read(bytes, read, bytes.length - read);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				System.out.println("sleep 1000");
+				Thread.sleep(3000);
+				System.out.println(".available: " + getIn().available() + " avail2: " + pipedStream.available() + " off " + read);
+				readBytes = getIn().read(bytes, read, bytes.length - read);
+			}*/
 		} catch (IOException e) {
 			return 0;
 		} catch (InterruptedException e) {
@@ -127,8 +138,6 @@ public class MP3Decoder
 		while( readBytes != -1 && read != bytes.length )
 		{
 			try {
-				//while (getIn().available() < bytes.length - read ) // todo: zstan
-				//	Thread.sleep(100);
 				readBytes = getIn().read( bytes, read, bytes.length - read );
 			} catch (IOException e) {
 				return 0;

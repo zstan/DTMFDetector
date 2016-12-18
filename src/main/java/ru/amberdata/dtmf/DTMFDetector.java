@@ -5,6 +5,8 @@ import com.tino1b2be.dtmfdecoder.DTMFDecoderException;
 import com.tino1b2be.dtmfdecoder.DTMFUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.amberdata.dtmf.configuration.AdBreak;
+import ru.amberdata.dtmf.configuration.Channel;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -16,10 +18,12 @@ import java.io.InputStream;
 public class DTMFDetector implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(DTMFDetector.class);
-    private InputStream source;
+    private final InputStream source;
+    private final Channel ch;
 
-    public DTMFDetector(InputStream in) {
+    public DTMFDetector(InputStream in, Channel ch) {
         this.source = in;
+        this.ch = ch;
     }
 
     @Override
@@ -27,7 +31,14 @@ public class DTMFDetector implements Runnable {
         logger.info("DTMFDetector initialize");
         try {
             DTMFUtil dtmf = new DTMFUtil(source);
-            DTMFUtil.setMinToneDuration(70);
+            AdBreak adBreak =  ch.getAdBreak().get(0); // todo: refactor !
+            DTMFUtil.setMinToneDuration(adBreak.getCueTone().getSymbolLength());
+            if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
+                dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
+            }
+            dtmf.setStartLabel(adBreak.getCueTone().getStartSymbols()); //todo: refactor !!!
+            dtmf.setStopLabel(adBreak.getCueTone().getStopSymbols()); //todo: refactor !!!
+
             logger.info("DTMFDetector start decode");
             dtmf.decode();
             String[] sequence = dtmf.getDecoded();

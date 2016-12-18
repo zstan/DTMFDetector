@@ -17,11 +17,11 @@
                 <symbolLength>70</symbolLength>
             </cueTone>
         </adBreak>
-        <audioFormat>MPEG</audioFormat>
-        <audioPID>68</audioPID>
-        <dtmfChannel>auto</dtmfChannel>
+        <cutoffNoiseRatio>0.50</cutoffNoiseRatio>
+        <audioFormat>MPEG</audioFormat> <!-- not supported-->
+        <audioPID>69</audioPID>
+        <dtmfChannel>auto</dtmfChannel> <!-- not supported-->
         <name>ch name 1</name>
-        <networkInterface>eth1</networkInterface>
         <streamAddress>127.0.0.1:1234</streamAddress>
     </channel>
     <demoMode>true</demoMode>
