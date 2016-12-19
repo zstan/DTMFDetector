@@ -84,11 +84,14 @@ public class Demuxer implements Runnable {
                     if (inFrame != null) {
                         ByteBuffer data = inFrame.getData();
                         fcount++;
+                        //if (fcount % 10 == 0)
+                        //    System.out.print("*");
                         if (fcount % 10 == 0)
-                            System.out.print("*");
+                            System.out.println(fcount + " " + data.remaining());
                         pipedChannel.write(data);
                     } else {
-                        Thread.sleep(200);
+                        //Thread.sleep(200);
+                        wait();
                         logger.info("sleep source.size: " + source.size() + " source.position: " + source.position());
                     }
                 }

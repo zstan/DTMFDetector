@@ -107,15 +107,16 @@ public class MP3Decoder
 			bytes = new byte[buffer.getByteArrayBufferSize( getIn().getFormat() )];
 		}
 			
-		int read = 0;			
+		int read = 0;
 		int readBytes = 0;
 		try {
 			//System.out.println("available() sleep " + pipedStream.available());
-			if (pipedStream.available() < 6000) {// todo: zstan
-				Thread.sleep(400);
-				int tt = bytes.length - read;
-				//System.out.println(".available() sleep " + getIn().available() + " off " + read + " len " + tt);
+			int count = 0;
+			while (bytes.length * 3 > pipedStream.available()) {// todo: zstan
+				Thread.sleep(200);
+				System.err.println(".available()  " + getIn().available() + " off " + read + " bl " + bytes.length + " "  + count++);
 			}
+			readBytes = getIn().read(bytes, read, bytes.length - read);
 			/*try {
 				int tt = bytes.length - read;
 				System.out.println(".available: " + getIn().available() + " avail2: " + pipedStream.available() + " off " + read + " len " + tt);

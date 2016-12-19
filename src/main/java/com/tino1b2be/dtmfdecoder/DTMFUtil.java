@@ -1118,7 +1118,21 @@ public class DTMFUtil {
 		double[] tempBuffer12 = new double[bufferSize];
 		double[] tempBuffer22 = new double[bufferSize];
 
-		int samplesRead = audio.read(buffer);
+		int samplesRead;
+		while (true) {
+			try {
+				samplesRead = audio.read(buffer);
+				break;
+			} catch (ArrayIndexOutOfBoundsException e) {
+				try {
+					Thread.sleep(500);
+					//audio.read(new double[1]);
+					System.err.println("jopa!!!" + e);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
 		samplesReadSum += 1;
 		if (samplesRead < bufferSize) {
 			audio.close();
