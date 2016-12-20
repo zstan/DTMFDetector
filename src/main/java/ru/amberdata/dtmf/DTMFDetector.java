@@ -39,6 +39,8 @@ public class DTMFDetector implements Runnable {
             dtmf.setStartLabel(adBreak.getCueTone().getStartSymbols()); //todo: refactor !!!
             dtmf.setStopLabel(adBreak.getCueTone().getStopSymbols()); //todo: refactor !!!
 
+
+
             logger.info("DTMFDetector start decode");
             dtmf.decode();
             String[] sequence = dtmf.getDecoded();

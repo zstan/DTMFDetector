@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -41,6 +44,7 @@ import com.tino1b2be.audio.AudioFile;
 import com.tino1b2be.audio.AudioFileException;
 import com.tino1b2be.audio.TempAudio;
 import com.tino1b2be.audio.WavFileException;
+import ru.amberdata.dtmf.http.IAction;
 
 /**
  * Class to decode DTMF signals in a supported audio file.
@@ -1119,11 +1123,11 @@ public class DTMFUtil {
 		double[] tempBuffer22 = new double[bufferSize];
 
 		int samplesRead;
-		while (true) {
-			try {
+		//while (true) {
+			//try {
 				samplesRead = audio.read(buffer);
-				break;
-			} catch (ArrayIndexOutOfBoundsException e) {
+			//	break;
+			/*} catch (ArrayIndexOutOfBoundsException e) {
 				try {
 					Thread.sleep(500);
 					//audio.read(new double[1]);
@@ -1131,8 +1135,8 @@ public class DTMFUtil {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-			}
-		}
+			}*/
+		//}
 		samplesReadSum += 1;
 		if (samplesRead < bufferSize) {
 			audio.close();
@@ -1550,4 +1554,5 @@ public class DTMFUtil {
 		}
 		return label;
 	}
+
 }

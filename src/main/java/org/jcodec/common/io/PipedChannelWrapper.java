@@ -13,22 +13,21 @@ public class PipedChannelWrapper implements SeekableByteChannel {
     private long pos = 0;
     ByteBuffer buf = ByteBuffer.allocate(138_000_0);
     boolean readFomBuf = false;
-    private long count = 0;
 
-    public PipedChannelWrapper(InputStream iin) {
-        in = iin;
-        //buf.clear();
+    public PipedChannelWrapper(InputStream in) {
+        this.in = in;
+        buf.clear();
     }
 
     @Override
     public long position() throws IOException {
-        System.out.println("not supported: position ");
+        System.out.println("PipedChannelWrapper, not supported: position ");
         return 0;
     }
 
     @Override
     public SeekableByteChannel setPosition(long newPosition) throws IOException {
-        System.out.println("not supported: newPosition " + newPosition);
+        System.out.println("PipedChannelWrapper, not supported: newPosition " + newPosition + " size: " + pos);
         readFomBuf = true;
         buf.flip();
         return this;
@@ -36,9 +35,8 @@ public class PipedChannelWrapper implements SeekableByteChannel {
 
     @Override
     public long size() throws IOException {
-        long size = 188 + pos;
-        System.out.println("not supported: size " + size);
-        return size;
+        System.out.println("not supported: size " + pos);
+        return pos;
     }
 
     @Override
@@ -49,35 +47,29 @@ public class PipedChannelWrapper implements SeekableByteChannel {
 
     @Override
     public int read(ByteBuffer dst) throws IOException {
-        //System.out.println("dst remaining : " + dst.remaining() + " pos " + dst.position());
-        byte[] arr;
+        byte[] arr = new byte[dst.remaining()];
         int size;
         if (readFomBuf) {
-            if (buf.remaining()>=188) {
-                arr = new byte[dst.remaining()];
+            if (buf.remaining()>=0) {
+                if (buf.remaining() <= dst.remaining()) {
+                    buf.get(arr, 0, buf.remaining());
+                    in.read(arr, buf.remaining(), dst.remaining() - buf.remaining());
+                }
+                else {
+                    buf.get(arr, 0, dst.remaining());
+                }
                 size = dst.remaining();
-                int p1 = buf.position();
-                int p2 = dst.remaining();
-                buf.get(arr, 0, p2);
             } else {
-                //System.out.println("dst remaining : " + dst.remaining());
-                arr = new byte[dst.remaining()];
                 size = in.read(arr);
             }
         }
         else {
-            arr = new byte[dst.remaining()];
             size = in.read(arr);
         }
-        //System.out.println("read : " + dst.remaining() + " " + size);
-        //dst.clear();
         dst.put(arr);
-        //dst.flip(); // -
         if (!readFomBuf) {
             buf.put(arr);
-            //System.out.println(count ++);
         }
-        //dst.flip(); // -
         pos += size;
         return size;
     }

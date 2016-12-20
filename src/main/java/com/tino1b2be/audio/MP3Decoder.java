@@ -3,6 +3,7 @@ package com.tino1b2be.audio;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
 import java.io.PushbackInputStream;
 import java.util.HashMap;
 
@@ -110,27 +111,9 @@ public class MP3Decoder
 		int read = 0;
 		int readBytes = 0;
 		try {
-			//System.out.println("available() sleep " + pipedStream.available());
-			int count = 0;
-			while (bytes.length * 3 > pipedStream.available()) {// todo: zstan
-				Thread.sleep(200);
-				System.err.println(".available()  " + getIn().available() + " off " + read + " bl " + bytes.length + " "  + count++);
-			}
-			readBytes = getIn().read(bytes, read, bytes.length - read);
-			/*try {
-				int tt = bytes.length - read;
-				System.out.println(".available: " + getIn().available() + " avail2: " + pipedStream.available() + " off " + read + " len " + tt);
 				readBytes = getIn().read(bytes, read, bytes.length - read);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				System.out.println("sleep 1000");
-				Thread.sleep(3000);
-				System.out.println(".available: " + getIn().available() + " avail2: " + pipedStream.available() + " off " + read);
-				readBytes = getIn().read(bytes, read, bytes.length - read);
-			}*/
 		} catch (IOException e) {
 			return 0;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		if( readBytes == -1 )
 			return 0;
