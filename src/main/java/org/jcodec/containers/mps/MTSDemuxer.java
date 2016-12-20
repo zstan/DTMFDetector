@@ -192,14 +192,11 @@ public class MTSDemuxer implements MPEGDemuxer {
         FileChannelWrapper fos = NIOUtils.writableChannel(new File("outFile.mp2"));
         FileOutputStream output = new FileOutputStream("testStream.ts", false);
 
-        DatagramChannel channel = DatagramChannel.open();
-        channel.socket().bind(new InetSocketAddress(1234));
         //channel.socket().setReceiveBufferSize(66000);
         //channel.setOption(StandardSocketOptions.SO_RCVBUF, 66000);
         ByteBuffer buf = ByteBuffer.allocateDirect(188000);
-        System.out.println(channel.isConnected());
 
-        SeekableByteChannel source = readableFileChannel(channel);
+        SeekableByteChannel source = readableFileChannel(new InetSocketAddress(1234));
 
         PipedOutputStream pOut = new PipedOutputStream();
         PipedInputStream pipedInputStream = new PipedInputStream(pOut, 18800000);
@@ -220,7 +217,6 @@ public class MTSDemuxer implements MPEGDemuxer {
 
         fos.close();
         channel1.close();
-        channel.close();
     }
 
     public static void main(String[] args) throws Exception {

@@ -3,12 +3,14 @@ package ru.amberdata.dtmf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.SeekableByteChannel;
+import org.jcodec.common.io.UDPInputStream;
 import ru.amberdata.dtmf.configuration.Channel;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
@@ -49,15 +51,13 @@ public class DatagramChannelStreamer implements Runnable {
         DTMFContext context = new DTMFContext();
 
         for (Channel ch : context.dtmfConfig.getChannel()) { // todo: new thread chain
-            DatagramChannel datagramChannel = DatagramChannel.open();
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
-            datagramChannel.socket().bind(iAddr);
-
             ByteBuffer buf = ByteBuffer.allocateDirect(188000);
 
-            SeekableByteChannel source = readableFileChannel(datagramChannel);
+            SeekableByteChannel source = readableFileChannel(iAddr);
+            //UDPInputStream source = new UDPInputStream(iAddr);
 
             PipedOutputStream pipedOutput = new PipedOutputStream();
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
@@ -68,12 +68,12 @@ public class DatagramChannelStreamer implements Runnable {
 
             while (source.read(buf) != -1) {
                 buf.flip();
+                System.out.println("udp: " + buf.remaining());
                 pipedChannel.write(buf);
             }
             demuxerThread.interrupt();
             pipedOutput.close();
             pipedChannel.close();
-            datagramChannel.close();
         }
     }
 

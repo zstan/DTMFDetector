@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
@@ -15,8 +16,8 @@ public class DatagramChannelWrapper implements SeekableByteChannel {
     private DatagramChannel ch;
     private long position = 0;
 
-    public DatagramChannelWrapper(DatagramChannel ch) {
-        this.ch = ch;
+    public DatagramChannelWrapper(InetSocketAddress iAddr) throws IOException {
+        this.ch = DatagramChannel.open().bind(iAddr);
     }
 
     @Override

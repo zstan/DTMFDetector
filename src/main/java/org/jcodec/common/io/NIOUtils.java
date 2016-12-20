@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -355,7 +356,7 @@ public class NIOUtils {
         return new FileChannelWrapper(new FileOutputStream(file).getChannel());
     }
 
-    public static DatagramChannelWrapper readableFileChannel(DatagramChannel ch) throws FileNotFoundException {
+    public static DatagramChannelWrapper readableFileChannel(InetSocketAddress ch) throws IOException {
         return new DatagramChannelWrapper(ch);
     }
 
