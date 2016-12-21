@@ -77,9 +77,6 @@ public class DTMFUtil {
 	private static boolean decode80 = false;
 	private static boolean decode100 = false;
 
-	private String startLabel = "";
-	private String stopLabel = "";
-
 	private boolean decoder = false;
 	private boolean generate = false;
 
@@ -318,6 +315,7 @@ public class DTMFUtil {
 			throw new DTMFDecoderException(
 					"Sampling Frequency of the audio file is too high. Please use a file with a lower Sampling Frequency.");
 		}
+        System.out.println("frameSize: " + frameSize);
 	}
 
 	/**
@@ -1123,20 +1121,8 @@ public class DTMFUtil {
 		double[] tempBuffer22 = new double[bufferSize];
 
 		int samplesRead;
-		//while (true) {
-			//try {
-				samplesRead = audio.read(buffer);
-			//	break;
-			/*} catch (ArrayIndexOutOfBoundsException e) {
-				try {
-					Thread.sleep(500);
-					//audio.read(new double[1]);
-					System.err.println("jopa!!!" + e);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-			}*/
-		//}
+		samplesRead = audio.read(buffer);
+
 		samplesReadSum += 1;
 		if (samplesRead < bufferSize) {
 			audio.close();
@@ -1528,31 +1514,9 @@ public class DTMFUtil {
 		FftCutoffPowerNoiseRatio = val;
 	}
 
-	public String getStartLabel() {
-		return startLabel;
-	}
-
-	public void setStartLabel(String startLabel) {
-		this.startLabel = startLabel;
-	}
-
-	public String getStopLabel() {
-		return stopLabel;
-	}
-
-	public void setStopLabel(String endLabel) {
-		this.stopLabel = endLabel;
-	}
-
 	private String labelReact(String label) {
-		if (label.equals(getStartLabel())) {
-			System.out.println("start label found: " + getStartLabel() + ", call some callback...");
-			return "";
-		} else if (label.equals(getStopLabel())) {
-			System.out.println("stop label found: " + getStopLabel() + "call some callback...");
-			return "";
-		}
-		return label;
+		//onLabel(label);
+        return "";
 	}
 
 }

@@ -20,6 +20,7 @@ public class DTMFDetector implements Runnable {
     private static final Logger logger = LogManager.getLogger(DTMFDetector.class);
     private final InputStream source;
     private final Channel ch;
+    private DTMFUtil dtmf;
 
     public DTMFDetector(InputStream in, Channel ch) {
         this.source = in;
@@ -30,14 +31,7 @@ public class DTMFDetector implements Runnable {
     public void run() {
         logger.info("DTMFDetector initialize");
         try {
-            DTMFUtil dtmf = new DTMFUtil(source);
-            AdBreak adBreak =  ch.getAdBreak().get(0); // todo: refactor !
-            DTMFUtil.setMinToneDuration(ch.getSymbolLength());
-            if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
-                dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
-            }
-            dtmf.setStartLabel(adBreak.getCueTone().getStartSymbols()); //todo: refactor !!!
-            dtmf.setStopLabel(adBreak.getCueTone().getStopSymbols()); //todo: refactor !!!
+            dtmf = new DTMFUtil(source);
 
             logger.info("DTMFDetector start decode");
             dtmf.decode();
@@ -50,7 +44,7 @@ public class DTMFDetector implements Runnable {
                         + "\nThe DTMF tones found in channel two are: " + sequence[1]);
             }
 
-        } catch (IOException | UnsupportedAudioFileException | AudioFileException | DTMFDecoderException e) {
+        } catch (IOException | AudioFileException | DTMFDecoderException | UnsupportedAudioFileException e) {
             e.printStackTrace();
         }
         logger.info("DTMFDetector close");

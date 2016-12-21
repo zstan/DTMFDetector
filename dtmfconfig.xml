@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <dtmfDetectorConfig>
-    <channel>
-        <adBreak>
+    <channel id="100" name="vesti 24">
+        <streamAddress>127.0.0.1:1234</streamAddress>
+        <audioPID>68</audioPID>
+        <audioFormat>MPEG</audioFormat>
+        <dtmfChannel>auto</dtmfChannel>
+        <cutoffNoiseRatio>0.50</cutoffNoiseRatio>
+        <symbolLength>70</symbolLength>
+        <pauseLength>70</pauseLength>
+        <adBreak id="1">
             <cueTone>
-                <pauseLength>70</pauseLength>
                 <startSymbols>1234</startSymbols>
                 <stopSymbols>89</stopSymbols>
-                <symbolLength>70</symbolLength>
             </cueTone>
         </adBreak>
-        <adBreak>
+        <adBreak id="2">
             <cueTone>
-                <pauseLength>70</pauseLength>
                 <startSymbols>123</startSymbols>
                 <stopSymbols>78</stopSymbols>
-                <symbolLength>70</symbolLength>
             </cueTone>
         </adBreak>
-        <cutoffNoiseRatio>0.50</cutoffNoiseRatio>
-        <audioFormat>MPEG</audioFormat> <!-- not supported-->
-        <audioPID>68</audioPID>
-        <dtmfChannel>auto</dtmfChannel> <!-- not supported-->
-        <name>ch name 1</name>
-        <streamAddress>127.0.0.1:1234</streamAddress>
     </channel>
     <demoMode>true</demoMode>
 </dtmfDetectorConfig>

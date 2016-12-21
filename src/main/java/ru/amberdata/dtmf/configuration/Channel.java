@@ -1,18 +1,20 @@
 package ru.amberdata.dtmf.configuration;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by zhenya on 2016-12-16.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Channel {
 
-    private String name;
     private String streamAddress;
-    private Integer AudioPID;
-    private String AudioFormat;
+    private Integer audioPID;
+    private String audioFormat;
     private DTMFChannel dtmfChannel;
     private Double cutoffNoiseRatio = -1.;
     private Integer symbolLength;
@@ -20,7 +22,11 @@ public class Channel {
 
     private List<AdBreak> adBreak = new ArrayList<>();
 
-    @XmlElement(required=true)
+    @XmlAttribute(required = true)
+    private Integer id;
+    @XmlAttribute()
+    private String name;
+
     public Integer getSymbolLength() {
         return symbolLength;
     }
@@ -29,7 +35,6 @@ public class Channel {
         this.symbolLength = symbolLength;
     }
 
-    @XmlElement(required=true)
     public Integer getPauseLength() {
         return pauseLength;
     }
@@ -38,32 +43,26 @@ public class Channel {
         this.pauseLength = pauseLength;
     }
 
-    @XmlElement(required=true)
     public List<AdBreak> getAdBreak() {
         return adBreak;
     }
 
-    @XmlElement(required=true)
     public DTMFChannel getDtmfChannel() {
         return dtmfChannel;
     }
 
-    @XmlElement(required=true)
     public String getAudioFormat() {
-        return AudioFormat;
+        return audioFormat;
     }
 
-    @XmlElement(required=true)
     public Integer getAudioPID() {
-        return AudioPID;
+        return audioPID;
     }
 
-    @XmlElement(required=true)
     public String getStreamAddress() {
         return streamAddress;
     }
 
-    @XmlElement(required=true)
     public String getName() {
         return name;
     }
@@ -77,11 +76,11 @@ public class Channel {
     }
 
     public void setAudioPID(Integer audioPID) {
-        AudioPID = audioPID;
+        this.audioPID = audioPID;
     }
 
     public void setAudioFormat(String audioFormat) {
-        AudioFormat = audioFormat;
+        this.audioFormat = audioFormat;
     }
 
     public void setDtmfChannel(DTMFChannel DTMFChannel) {
@@ -92,13 +91,20 @@ public class Channel {
         this.adBreak = action;
     }
 
-    @XmlElement
     public Double getCutoffNoiseRatio() {
         return cutoffNoiseRatio;
     }
 
     public void setCutoffNoiseRatio(Double cutoffNoiseRatio) {
         this.cutoffNoiseRatio = cutoffNoiseRatio;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
 
