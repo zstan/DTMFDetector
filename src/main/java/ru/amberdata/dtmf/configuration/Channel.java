@@ -15,7 +15,28 @@ public class Channel {
     private String AudioFormat;
     private DTMFChannel dtmfChannel;
     private Double cutoffNoiseRatio = -1.;
+    private Integer symbolLength;
+    private Integer pauseLength;
+
     private List<AdBreak> adBreak = new ArrayList<>();
+
+    @XmlElement(required=true)
+    public Integer getSymbolLength() {
+        return symbolLength;
+    }
+
+    public void setSymbolLength(Integer symbolLength) {
+        this.symbolLength = symbolLength;
+    }
+
+    @XmlElement(required=true)
+    public Integer getPauseLength() {
+        return pauseLength;
+    }
+
+    public void setPauseLength(Integer pauseLength) {
+        this.pauseLength = pauseLength;
+    }
 
     @XmlElement(required=true)
     public List<AdBreak> getAdBreak() {

@@ -32,14 +32,12 @@ public class DTMFDetector implements Runnable {
         try {
             DTMFUtil dtmf = new DTMFUtil(source);
             AdBreak adBreak =  ch.getAdBreak().get(0); // todo: refactor !
-            DTMFUtil.setMinToneDuration(adBreak.getCueTone().getSymbolLength());
+            DTMFUtil.setMinToneDuration(ch.getSymbolLength());
             if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
                 dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
             }
             dtmf.setStartLabel(adBreak.getCueTone().getStartSymbols()); //todo: refactor !!!
             dtmf.setStopLabel(adBreak.getCueTone().getStopSymbols()); //todo: refactor !!!
-
-
 
             logger.info("DTMFDetector start decode");
             dtmf.decode();
