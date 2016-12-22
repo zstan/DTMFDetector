@@ -21,17 +21,23 @@ public class DTMFDetector implements Runnable {
     private final InputStream source;
     private final Channel ch;
     private DTMFUtil dtmf;
+    private static int HEADER_SIZE = 1000;
+    private final ChannelManager chManager;
 
     public DTMFDetector(InputStream in, Channel ch) {
         this.source = in;
         this.ch = ch;
+        this.chManager = new ChannelManager(ch);
     }
 
     @Override
     public void run() {
         logger.info("DTMFDetector initialize");
         try {
+            while (source.available() < HEADER_SIZE)
+                Thread.sleep(100);
             dtmf = new DTMFUtil(source);
+            this.chManager.initDtmf(dtmf);
 
             logger.info("DTMFDetector start decode");
             dtmf.decode();
@@ -44,7 +50,7 @@ public class DTMFDetector implements Runnable {
                         + "\nThe DTMF tones found in channel two are: " + sequence[1]);
             }
 
-        } catch (IOException | AudioFileException | DTMFDecoderException | UnsupportedAudioFileException e) {
+        } catch (IOException | AudioFileException | DTMFDecoderException | UnsupportedAudioFileException | InterruptedException e) {
             e.printStackTrace();
         }
         logger.info("DTMFDetector close");

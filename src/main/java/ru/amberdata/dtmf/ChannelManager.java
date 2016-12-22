@@ -48,11 +48,9 @@ public class ChannelManager {
         if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
             dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
         }
+        dtmf.setLabelPauseDurr(ch.getPauseLength());
     }
 
-    /*
-    what if we loose some label ?
-     */
     public boolean onLabelStrong(String label) {
         boolean result = false;
         if (stopLabels != null) {
@@ -71,32 +69,10 @@ public class ChannelManager {
                 logger.info("start label found: " + label + " call some callback...");
                 result = true;
             } else {
-                logger.info("expected stop label(s): " + String.join(" ", adBlocks.keySet()) + " but found: " + label);
+                logger.info("expected start label(s): " + String.join(" ", adBlocks.keySet()) + " but found: " + label);
             }
         }
 
         return result;
-    }
-
-    public boolean onLabelSoft(String label) {
-        if (stopLabels != null) {
-            if (stopLabels.contains(label)) {
-                stopLabels = null;
-                logger.info("stop label found: " + label + " call some callback...");
-            } else {
-                logger.error("expected stop label(s): " + String.join(" ", stopLabels) + " but found: " + label);
-                stopLabels = null;
-            }
-        } else {
-            Set<String> stopLbls = adBlocks.get(label);
-            if (stopLbls != null) {
-                stopLabels = stopLbls;
-                logger.info("start label found: " + label + " call some callback...");
-            } else {
-                logger.info("expected stop label(s): " + String.join(" ", adBlocks.keySet()) + " but found: " + label);
-            }
-        }
-
-        return true;
     }
 }

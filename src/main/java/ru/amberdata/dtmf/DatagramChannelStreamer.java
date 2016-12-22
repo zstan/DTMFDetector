@@ -3,22 +3,18 @@ package ru.amberdata.dtmf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.SeekableByteChannel;
-import org.jcodec.common.io.UDPInputStream;
 import ru.amberdata.dtmf.configuration.Channel;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
-import java.nio.channels.DatagramChannel;
 import java.nio.channels.WritableByteChannel;
 
 import static org.jcodec.common.io.NIOUtils.readableFileChannel;
+import static ru.amberdata.dtmf.configuration.Utils.initializeAddress;
 
 /**
  * Created by zhenya on 2016-12-18.
@@ -26,19 +22,6 @@ import static org.jcodec.common.io.NIOUtils.readableFileChannel;
 public class DatagramChannelStreamer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(DatagramChannelStreamer.class);
-
-    private static InetSocketAddress initializeAddress(String addr) throws Exception {
-        int port = -1;
-        try {
-            port = Integer.parseInt(addr);
-            return new InetSocketAddress(port);
-        } catch (NumberFormatException e) {
-            String[] hostPort = addr.split(":");
-            if (hostPort.length != 2)
-                throw new Exception ("unacceptable streamAddress param: " + addr);
-            return new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1]));
-        }
-    }
 
     private void init() throws Exception {
         InputStream instream =
@@ -68,7 +51,6 @@ public class DatagramChannelStreamer implements Runnable {
 
             while (source.read(buf) != -1) {
                 buf.flip();
-                System.out.println("udp: " + buf.remaining());
                 pipedChannel.write(buf);
             }
             demuxerThread.interrupt();

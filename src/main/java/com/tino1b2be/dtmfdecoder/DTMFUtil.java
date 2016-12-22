@@ -83,6 +83,8 @@ public class DTMFUtil {
 	private String seq[] = {"", ""};
 	private AudioFile audio;
 	private int frameSize;
+	private int frameBufferSize;
+	private int labelPauseDurr;
 
 	private static int[] freqIndicies;
 
@@ -301,6 +303,7 @@ public class DTMFUtil {
 			throw new DTMFDecoderException("Sampling Rate cannot be less than 8kHz.");
 		if (goertzel) {
 			this.frameSize = (int) Math.floor(GOERTZEL_FRAME_DURATION * audio.getSampleRate());
+			this.frameBufferSize = (int) Math.ceil(frameSize / 3.0);
 		} else {
 			int size = 0;
 			for (int i = 8; i <= 15; i++) {
@@ -309,13 +312,14 @@ public class DTMFUtil {
 					continue;
 				else {
 					frameSize = size;
+					this.frameBufferSize = (int) Math.ceil(frameSize / 3.0);
+					System.out.println("frameSize: " + frameSize);
 					return;
 				}
 			}
 			throw new DTMFDecoderException(
 					"Sampling Frequency of the audio file is too high. Please use a file with a lower Sampling Frequency.");
 		}
-        System.out.println("frameSize: " + frameSize);
 	}
 
 	/**
@@ -875,16 +879,34 @@ public class DTMFUtil {
 		char[] prev2 = { '_', '_' };
 		char[] prev3 = { '_', '_' };
 		String[] seq2 = { "", "" };
-        long decodeCount = 0;
+        long framesCount = 0;
+
+		System.out.println("LabelPauseDurr: " + getLabelPauseDurr());
+		System.out.println("getMillisecondsPerFrame: " + getMillisecondsPerFrame());
 
 		do {
-
 			try {
 				curr = decodeNextFrameStereo();
-                ++decodeCount;
+				if (!seq2[1].isEmpty() || !seq2[0].isEmpty()) {  // todo: channels here !
+					++framesCount;
+					if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 2) {
+						String label;
+						if (seq2[0].isEmpty()) {
+							label = seq2[1];
+							seq2[1] = "";
+						} else {
+							label = seq2[0];
+							seq2[0] = "";
+						}
+						framesCount = 0;
+						labelReact(label);
+					}
+				}
 			} catch (DTMFDecoderException e) {
 				break;
 			}
+
+			//++framesCount;
 
 			// decode channel 1
 			if (curr[0] != '_') {
@@ -893,6 +915,7 @@ public class DTMFUtil {
 																	// positives
 					if (curr[0] != prev3[0]) {
 						seq2[0] += curr[0];
+						framesCount = 0; // zero count on change
 					}
 				}
 			}
@@ -907,8 +930,8 @@ public class DTMFUtil {
 																	// positives
 					if (curr[1] != prev3[1]) {
 						seq2[1] += curr[1];
-                        System.out.println(seq2[1] + " " + decodeCount);
-						seq2[1] = labelReact(seq2[1]);
+						//System.out.println(seq2[1] + "  " + framesCount);
+						framesCount = 0; // zero count on change
 					}
 				}
 			}
@@ -1047,13 +1070,12 @@ public class DTMFUtil {
 	 * @throws DTMFDecoderException
 	 */
 	private char decodeNextFrameMono() throws AudioFileException, DTMFDecoderException, IOException {
-		int bufferSize = (int) Math.ceil(frameSize / 3.0);
-		double[] buffer = new double[bufferSize];
-		double[] tempBuffer11 = new double[bufferSize];
-		double[] tempBuffer21 = new double[bufferSize];
+		double[] buffer = new double[frameBufferSize];
+		double[] tempBuffer11 = new double[frameBufferSize];
+		double[] tempBuffer21 = new double[frameBufferSize];
 
 		int framesRead = audio.read(buffer);
-		if (framesRead < bufferSize) {
+		if (framesRead < frameBufferSize) {
 			audio.close();
 			throw new DTMFDecoderException("Out of frames");
 		}
@@ -1113,18 +1135,17 @@ public class DTMFUtil {
 	 * @throws DTMFDecoderException
 	 */
 	private char[] decodeNextFrameStereo() throws IOException, AudioFileException, DTMFDecoderException {
-		int bufferSize = (int) Math.ceil(frameSize / 3.0);
-		double[][] buffer = new double[2][bufferSize];
-		double[] tempBuffer11 = new double[bufferSize];
-		double[] tempBuffer21 = new double[bufferSize];
-		double[] tempBuffer12 = new double[bufferSize];
-		double[] tempBuffer22 = new double[bufferSize];
+		double[][] buffer = new double[2][frameBufferSize];
+		double[] tempBuffer11 = new double[frameBufferSize];
+		double[] tempBuffer21 = new double[frameBufferSize];
+		double[] tempBuffer12 = new double[frameBufferSize];
+		double[] tempBuffer22 = new double[frameBufferSize];
 
 		int samplesRead;
 		samplesRead = audio.read(buffer);
 
 		samplesReadSum += 1;
-		if (samplesRead < bufferSize) {
+		if (samplesRead < frameBufferSize) {
 			audio.close();
 			throw new DTMFDecoderException("Out of samples");
 		}
@@ -1514,9 +1535,20 @@ public class DTMFUtil {
 		FftCutoffPowerNoiseRatio = val;
 	}
 
-	private String labelReact(String label) {
+	private void labelReact(String label) {
 		//onLabel(label);
-        return "";
+		System.out.println("fount label: " + label);
 	}
 
+	private int getMillisecondsPerFrame() {
+		return this.frameBufferSize * 1000 / audio.getSampleRate();
+	}
+
+	public int getLabelPauseDurr() {
+		return labelPauseDurr;
+	}
+
+	public void setLabelPauseDurr(int labelPauseDurr) {
+		this.labelPauseDurr = labelPauseDurr;
+	}
 }
