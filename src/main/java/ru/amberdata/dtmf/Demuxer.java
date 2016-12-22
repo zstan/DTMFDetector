@@ -86,7 +86,7 @@ public class Demuxer implements Runnable {
                         fcount++;
                         //if (fcount % 10 == 0)
                         //    System.out.print("*");
-                        if (fcount % 10 == 0)
+                        if (fcount % 20 == 0)
                             System.out.println(fcount + " " + data.remaining());
                         pipedChannel.write(data);
                     } else {

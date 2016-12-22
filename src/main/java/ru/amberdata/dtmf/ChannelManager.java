@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -49,10 +50,18 @@ public class ChannelManager {
             dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
         }
         dtmf.setLabelPauseDurr(ch.getPauseLength());
+
+        dtmf.setOnLabelAction(
+                new Consumer<String>() {
+            public void accept(String label) {
+                ChannelManager.this.onLabelStrong(label);
+            }
+        });
     }
 
     public boolean onLabelStrong(String label) {
         boolean result = false;
+        logger.debug("label event: " + label);
         if (stopLabels != null) {
             if (stopLabels.contains(label)) {
                 stopLabels = null;

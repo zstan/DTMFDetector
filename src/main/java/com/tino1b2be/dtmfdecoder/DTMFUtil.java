@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -44,6 +45,9 @@ import com.tino1b2be.audio.AudioFile;
 import com.tino1b2be.audio.AudioFileException;
 import com.tino1b2be.audio.TempAudio;
 import com.tino1b2be.audio.WavFileException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.amberdata.dtmf.ChannelManager;
 import ru.amberdata.dtmf.http.IAction;
 
 /**
@@ -53,6 +57,8 @@ import ru.amberdata.dtmf.http.IAction;
  *
  */
 public class DTMFUtil {
+
+	private static final Logger logger = LogManager.getLogger(DTMFUtil.class);
 
 	/**
 	 * True if the decoder is to be used in debug mode. False by default
@@ -85,6 +91,7 @@ public class DTMFUtil {
 	private int frameSize;
 	private int frameBufferSize;
 	private int labelPauseDurr;
+	private Consumer<String> onLabelAction;
 
 	private static int[] freqIndicies;
 
@@ -1207,11 +1214,11 @@ public class DTMFUtil {
 			try {
 				if (outArr[0] != '_') {
 					outArr[0] = getRawChar(dft_data1);
-					System.out.println("framesRead: " + samplesReadSum + " outArr[0] " + outArr[0]);
+					logger.debug("framesRead: " + samplesReadSum + " outArr[0] " + outArr[0]);
 				}
 				if (outArr[1] != '_') {
 					outArr[1] = getRawChar(dft_data2);
-					System.out.println("framesRead: " + samplesReadSum + " outArr[1] " + outArr[0]);
+					logger.debug("framesRead: " + samplesReadSum + " outArr[1] " + outArr[1]);
 				}
 			} catch (DTMFDecoderException e) {
 				e.printStackTrace();
@@ -1536,8 +1543,7 @@ public class DTMFUtil {
 	}
 
 	private void labelReact(String label) {
-		//onLabel(label);
-		System.out.println("fount label: " + label);
+		this.onLabelAction.accept(label);
 	}
 
 	private int getMillisecondsPerFrame() {
@@ -1550,5 +1556,13 @@ public class DTMFUtil {
 
 	public void setLabelPauseDurr(int labelPauseDurr) {
 		this.labelPauseDurr = labelPauseDurr;
+	}
+
+	public Consumer<String> getOnLabelAction() {
+		return onLabelAction;
+	}
+
+	public void setOnLabelAction(Consumer<String> onLabelAction) {
+		this.onLabelAction = onLabelAction;
 	}
 }
