@@ -79,9 +79,8 @@ public class DTMFUtil {
 	private static final double GOERTZEL_FRAME_DURATION = 0.045;
 
 	private boolean decoded;
-	private static boolean decode60 = false;
-	private static boolean decode80 = false;
-	private static boolean decode100 = false;
+	private enum LabelLen {DECODE_40, DECODE_60, DECODE_80, DECODE_100};
+	private LabelLen labelLen = LabelLen.DECODE_40;
 
 	private boolean decoder = false;
 	private boolean generate = false;
@@ -1304,36 +1303,39 @@ public class DTMFUtil {
 		if (decoded) {
 			return true;
 		}
-		if (audio.getNumChannels() == 1) {
-			if (decode60)
-				decodeMono60();
-			else if (decode80)
-				decodeMono80();
-			else if (decode100)
-				decodeMono100();
-			else
-				decodeMono40();
-			decoded = true;
-		} else if (audio.getNumChannels() == 2) {
-			if (decode60) {
-                System.out.println("decode60");
-                decodeStereo60();
-            }
-			else if (decode80) {
-                System.out.println("decode80");
-                decodeStereo80();
-            }
-			else if (decode100) {
-                System.out.println("decode100");
-                decodeStereo100();
-            }
-			else {
-                System.out.println("decode40");
-                decodeStereo40();
-            }
-			decoded = true;
-		} else
+		int numChannels = audio.getNumChannels();
+		if (numChannels > 2 || numChannels <= 0)
 			throw new DTMFDecoderException("Can only decode mono and stereo files.");
+
+		switch (labelLen) {
+			case DECODE_40:
+				if (numChannels == 1)
+					decodeMono40();
+				else
+					decodeStereo40();
+				break;
+			case DECODE_60:
+				if (numChannels == 1)
+					decodeMono60();
+				else
+					decodeStereo60();
+				break;
+			case DECODE_80:
+				if (numChannels == 1)
+					decodeMono80();
+				else
+					decodeStereo80();
+				break;
+			case DECODE_100:
+				if (numChannels == 1)
+					decodeMono100();
+				else
+					decodeStereo100();
+				break;
+			default:
+				decodeMono100();
+			decoded = true;
+		}
 		return true;
 	}
 
@@ -1346,22 +1348,18 @@ public class DTMFUtil {
 	 * @throws DTMFDecoderException
 	 *             Throws an exception if the duration is less than 40ms
 	 */
-	public static void setMinToneDuration(int duration) throws DTMFDecoderException {
+	public void setMinToneDuration(int duration) throws DTMFDecoderException {
 		if (duration <= 0) // use default duration of 40ms
 			return;
 		else if (duration < 40)
 			throw new DTMFDecoderException(
 					"Minimum tone duration must be greater than 40ms or, use 0 or a negative number to use the default ITU-T value.");
 		else if (duration < 80)
-			decode60 = true;
+			labelLen = LabelLen.DECODE_60;
 		else if (duration < 100)
-			decode80 = true;
+			labelLen = LabelLen.DECODE_80;
 		else if (duration > 100)
-			decode100 = true;
-		else if (duration < Integer.MAX_VALUE)
-			decode100 = true;
-		else
-			throw new DTMFDecoderException("the given minimum tone duration is too long.");
+			labelLen = LabelLen.DECODE_100;
 	}
 
 	/**

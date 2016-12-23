@@ -51,50 +51,21 @@ public class DTMFDecoder {
 	 * 
 	 */
 	public static void main(String[] args) throws AudioFileException, Exception {
-		
-		/*if (args.length == 2){
+
+		if (args.length == 2){
 			filename = args[0];
-			DTMFUtil.setMinToneDuration(Integer.parseInt(args[1]));
-		} else {
-			getInputFromUser();
-		}*/
-		
-		DTMFUtil dtmf = new DTMFUtil("I:\\WORK\\batya\\metka2\\jcodec\\outFile.mp3");
+		}
+
+		DTMFUtil dtmf = new DTMFUtil(filename);
 		dtmf.decode();
+		dtmf.setMinToneDuration(Integer.parseInt(args[1]));
 		String[] sequence = dtmf.getDecoded();
-		
+
 		if (dtmf.getChannelCount() == 1) {
 			System.out.println("The DTMF tones found in the given file are: " + sequence[0]);
 		} else {
 			System.out.println("The DTMF tones found in channel one are: " + sequence[0]
 					+ "\nThe DTMF tones found in channel one are: " + sequence[1]);
-		}	
-	}
-	
-	/**
-	 * Method to get input from the user
-	 */
-	private static void getInputFromUser() {
-		filename = "samples/stereo.wav";
-		System.out.print("Please enter the filename for the audio file to be decoded: ");
-		Scanner sc = new Scanner(System.in);
-		filename = sc.nextLine();
-		
-		System.out.print("Please enter the minimum tone duration to be used for detection. (0 for default value): ");
-		double tone;
-		do {
-			try {
-				tone = Double.parseDouble(sc.nextLine());
-				DTMFUtil.setMinToneDuration((int) tone);
-				break;
-			} catch (NumberFormatException e){
-				System.err.println("Input not a number. Please enter a valid number, decimals accepted. (0 or negative number to use default tone duration.)");
-			} catch (NullPointerException e) {
-				System.err.println("Please enter a valid number, decimals accepted. (0 or negative number to use default tone duration.)");
-			} catch (DTMFDecoderException e) {
-				System.err.println(e.getMessage());
-			}
-		} while (true);
-		sc.close();
+		}
 	}
 }

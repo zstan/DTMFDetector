@@ -1,5 +1,6 @@
 package ru.amberdata.dtmf;
 
+import com.sun.deploy.util.StringUtils;
 import com.sun.istack.internal.NotNull;
 import com.tino1b2be.dtmfdecoder.DTMFDecoderException;
 import com.tino1b2be.dtmfdecoder.DTMFUtil;
@@ -32,20 +33,22 @@ public class ChannelManager {
     public ChannelManager(Channel ch) {
         this.ch = ch;
         this.ch.getAdBreak().forEach(b -> {
-            String key = b.getCueTone().getStartSymbols();
-            Set<String> val = adBlocks.get(key);
+            String start = b.getCueTone().getStartSymbols();
+            String stop  = b.getCueTone().getStopSymbols();
+            Set<String> val = adBlocks.get(start);
             if (val != null)
-                val.add(b.getCueTone().getStopSymbols());
+                val.add(stop);
             else {
                 Set<String> stopLbls = new HashSet<>();
-                stopLbls.add(b.getCueTone().getStopSymbols());
-                adBlocks.put(key, stopLbls);
+                if (stop != null)
+                    stopLbls.add(stop);
+                adBlocks.put(start, stopLbls);
             }
         });
     }
 
     public void initDtmf(DTMFUtil dtmf) throws DTMFDecoderException {
-        DTMFUtil.setMinToneDuration(ch.getSymbolLength()); // todo: fix static method !!!
+        dtmf.setMinToneDuration(ch.getSymbolLength()); // todo: fix static method !!!
         if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
             dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
         }
@@ -59,26 +62,22 @@ public class ChannelManager {
         });
     }
 
-    public boolean onLabelStrong(String label) {
+    public boolean onLabelStrong(final String label) {
         boolean result = false;
         logger.debug("label event: " + label);
-        if (stopLabels != null) {
-            if (stopLabels.contains(label)) {
+
+        Set<String> stopLbls = adBlocks.get(label);
+        if (stopLbls != null) {
+            stopLabels = stopLbls;
+            logger.info("start label found: " + label + " call some callback...");
+            result = true;
+        } else {
+            if (stopLabels != null && stopLabels.contains(label)) {
                 stopLabels = null;
                 logger.info("stop label found: " + label + " call some callback...");
                 result = true;
             } else {
-                logger.error("expected stop label(s): " + String.join(" ", stopLabels) + " but found: " + label);
-                stopLabels = null;
-            }
-        } else {
-            Set<String> stopLbls = adBlocks.get(label);
-            if (stopLbls != null) {
-                stopLabels = stopLbls;
-                logger.info("start label found: " + label + " call some callback...");
-                result = true;
-            } else {
-                logger.info("expected start label(s): " + String.join(" ", adBlocks.keySet()) + " but found: " + label);
+                logger.info("stop without start label or unknown label found: " + label);
             }
         }
 

@@ -20,6 +20,11 @@
                 <stopSymbols>78</stopSymbols>
             </cueTone>
         </adBreak>
+        <adBreak id="3">
+            <cueTone>
+                <startSymbols>456</startSymbols>
+            </cueTone>
+        </adBreak>
     </channel>
     <demoMode>true</demoMode>
 </dtmfDetectorConfig>
