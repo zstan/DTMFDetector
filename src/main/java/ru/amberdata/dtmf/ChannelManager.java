@@ -1,13 +1,10 @@
 package ru.amberdata.dtmf;
 
-import com.sun.deploy.util.StringUtils;
-import com.sun.istack.internal.NotNull;
 import com.tino1b2be.dtmfdecoder.DTMFDecoderException;
 import com.tino1b2be.dtmfdecoder.DTMFUtil;
-import javafx.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.amberdata.dtmf.configuration.Channel;
+import ru.amberdata.dtmf.configuration.dtmf.Channel;
 import ru.amberdata.dtmf.http.IAction;
 
 import java.util.HashMap;

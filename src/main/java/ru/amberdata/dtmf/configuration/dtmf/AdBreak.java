@@ -1,9 +1,8 @@
-package ru.amberdata.dtmf.configuration;
+package ru.amberdata.dtmf.configuration.dtmf;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Created by zhenya on 2016-12-17.

@@ -1,4 +1,4 @@
-package ru.amberdata.dtmf.configuration;
+package ru.amberdata.dtmf.configuration.dtmf;
 
 /**
  * Created by zhenya on 2016-12-16.

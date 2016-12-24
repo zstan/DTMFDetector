@@ -1,6 +1,6 @@
 package ru.amberdata.dtmf;
 
-import ru.amberdata.dtmf.configuration.DTMFDetectorConfig;
+import ru.amberdata.dtmf.configuration.dtmf.DTMFDetectorConfig;
 import ru.amberdata.dtmf.configuration.Utils;
 
 /**

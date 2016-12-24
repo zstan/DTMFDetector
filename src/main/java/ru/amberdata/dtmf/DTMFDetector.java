@@ -5,8 +5,7 @@ import com.tino1b2be.dtmfdecoder.DTMFDecoderException;
 import com.tino1b2be.dtmfdecoder.DTMFUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.amberdata.dtmf.configuration.AdBreak;
-import ru.amberdata.dtmf.configuration.Channel;
+import ru.amberdata.dtmf.configuration.dtmf.Channel;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;

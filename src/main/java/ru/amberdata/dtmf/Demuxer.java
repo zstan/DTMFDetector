@@ -7,7 +7,7 @@ import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Packet;
 import org.jcodec.containers.mps.MPEGDemuxer;
 import org.jcodec.containers.mps.MTSDemuxer;
-import ru.amberdata.dtmf.configuration.Channel;
+import ru.amberdata.dtmf.configuration.dtmf.Channel;
 
 import java.io.*;
 import java.nio.ByteBuffer;

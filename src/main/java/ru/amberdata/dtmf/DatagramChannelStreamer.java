@@ -3,7 +3,7 @@ package ru.amberdata.dtmf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.SeekableByteChannel;
-import ru.amberdata.dtmf.configuration.Channel;
+import ru.amberdata.dtmf.configuration.dtmf.Channel;
 
 import java.io.InputStream;
 import java.io.PipedInputStream;
