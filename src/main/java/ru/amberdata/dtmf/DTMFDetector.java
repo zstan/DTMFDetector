@@ -6,6 +6,7 @@ import com.tino1b2be.dtmfdecoder.DTMFUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
+import ru.amberdata.dtmf.configuration.external.IExternalConfig;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -13,20 +14,21 @@ import java.io.InputStream;
 
 /**
  * Created by zhenya on 2016-12-15.
+ * based on github.com/tino1b2be/DTMF-Decoder
  */
 public class DTMFDetector implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(DTMFDetector.class);
     private final InputStream source;
-    private final Channel ch;
     private DTMFUtil dtmf;
     private static int HEADER_SIZE = 1000;
     private final ChannelManager chManager;
+    private final IExternalConfig externalManager;
 
-    public DTMFDetector(InputStream in, Channel ch) {
+    public DTMFDetector(InputStream in, ChannelManager chManager) {
         this.source = in;
-        this.ch = ch;
-        this.chManager = new ChannelManager(ch);
+        this.chManager = chManager;
+        this.externalManager = new ExternalManager();
     }
 
     @Override

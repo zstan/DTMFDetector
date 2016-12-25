@@ -31,13 +31,13 @@ public class DatagramChannelStreamer implements Runnable {
 
         logger.info( "The server is ready..." );
 
-        DTMFContext context = new DTMFContext();
+        DTMFContext context = DTMFContext.getDTMFContext();
 
-        for (Channel ch : context.dtmfConfig.getChannel()) { // todo: new thread chain
+        for (Channel ch : context.DTMF_CONFIG.getChannel()) { // todo: new thread chain
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
-            ByteBuffer buf = ByteBuffer.allocateDirect(188000);
+            ByteBuffer buf = ByteBuffer.allocateDirect(188_000);
 
             SeekableByteChannel source = readableFileChannel(iAddr);
             //UDPInputStream source = new UDPInputStream(iAddr);

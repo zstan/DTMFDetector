@@ -1,25 +1,27 @@
-package ru.amberdata.dtmf.configuration.management;
+package ru.amberdata.dtmf.configuration.external;
 
 import org.junit.Test;
+import ru.amberdata.dtmf.configuration.external.Elemental.AdBreak;
+import ru.amberdata.dtmf.configuration.external.Elemental.Channel;
+import ru.amberdata.dtmf.configuration.external.Elemental.CueTone;
+import ru.amberdata.dtmf.configuration.external.Elemental.ElementalConfig;
+
 import static org.junit.Assert.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
-import java.io.StringBufferInputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
  * Created by zhenya on 2016-12-24.
  */
-public class ManagementConfigTest {
+public class ExternalConfigTest {
 
     static final String ManagementConfigXML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"+
-            "<managementConfig>\n"+
+            "<elementalConfig>\n"+
             "    <channel id=\"1\" name=\"channel 1\">\n"+
             "        <serverAddress>127.0.0.1</serverAddress>\n"+
             "        <userName>admin</userName>\n"+
@@ -42,11 +44,11 @@ public class ManagementConfigTest {
             "        </adBreak>\n"+
             "    </channel>\n"+
             "    <moduleType>1</moduleType>\n"+
-            "</managementConfig>\n";
+            "</elementalConfig>\n";
 
     @Test
     public void configTest() {
-        ManagementConfig mgmtConfig = new ManagementConfig();
+        ElementalConfig mgmtConfig = new ElementalConfig();
         mgmtConfig.setModuleType("1");
 
         Channel ch1 = new Channel();
@@ -88,7 +90,7 @@ public class ManagementConfigTest {
 
         try {
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(ManagementConfig.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(ElementalConfig.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
             // output pretty printed

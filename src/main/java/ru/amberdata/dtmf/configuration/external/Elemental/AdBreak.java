@@ -1,4 +1,4 @@
-package ru.amberdata.dtmf.configuration.management;
+package ru.amberdata.dtmf.configuration.external.Elemental;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

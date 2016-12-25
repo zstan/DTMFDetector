@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Contains reference picture list management logic
+ * Contains reference picture list external logic
  * 
  * @author The JCodec Project
  */

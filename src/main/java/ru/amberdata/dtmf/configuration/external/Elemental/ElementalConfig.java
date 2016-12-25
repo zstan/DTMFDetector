@@ -1,4 +1,6 @@
-package ru.amberdata.dtmf.configuration.management;
+package ru.amberdata.dtmf.configuration.external.Elemental;
+
+import ru.amberdata.dtmf.configuration.external.IExternalConfig;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -13,7 +15,7 @@ import java.util.List;
  * Created by zhenya on 2016-12-24.
  */
 @XmlRootElement
-public class ManagementConfig {
+public class ElementalConfig implements IExternalConfig {
     private List<Channel> channel = new ArrayList<>();
     private String moduleType;
 
@@ -27,16 +29,18 @@ public class ManagementConfig {
     }
 
     @XmlElement(required=true)
+    @Override
     public String getModuleType() {
         return moduleType;
     }
 
+    @Override
     public void setModuleType(String moduleType) {
         this.moduleType = moduleType;
     }
 
     public static void main(String[] args) {
-        ManagementConfig mgmtConfig = new ManagementConfig();
+        ElementalConfig mgmtConfig = new ElementalConfig();
         mgmtConfig.setModuleType("1");
 
         Channel ch1 = new Channel();
@@ -78,7 +82,7 @@ public class ManagementConfig {
 
         try {
 
-            JAXBContext jaxbContext = JAXBContext.newInstance(ManagementConfig.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(ElementalConfig.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
             // output pretty printed

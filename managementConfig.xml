@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<managementConfig>
+    <channel id="1" name="channel 1">
+        <serverAddress>127.0.0.1</serverAddress>
+        <userName>admin</userName>
+        <authKey>some_auth_key1</authKey>
+        <externalID>100</externalID>
+        <adBreak id="1">
+            <cueTone id="1" commandTimeShift="145" cueTimeShift="8000"/>
+        </adBreak>
+        <adBreak id="2">
+            <cueTone id="1" commandTimeShift="143" cueTimeShift="4000"/>
+        </adBreak>
+    </channel>
+    <channel id="2" name="channel 2">
+        <serverAddress>127.0.0.2</serverAddress>
+        <userName>admin</userName>
+        <authKey>some_auth_key2</authKey>
+        <externalID>200</externalID>
+        <adBreak id="3">
+            <cueTone id="1" commandTimeShift="141" cueTimeShift="2000"/>
+        </adBreak>
+    </channel>
+    <moduleType>1</moduleType>
+</managementConfig>

@@ -71,7 +71,8 @@ public class Demuxer implements Runnable {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, ch));
+            ChannelManager chManager = new ChannelManager(ch);
+            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, chManager));
             dtmfDetectorThread.start();
 
             long fcount = 0;
@@ -90,8 +91,7 @@ public class Demuxer implements Runnable {
                             System.out.println(fcount + " " + data.remaining());
                         pipedChannel.write(data);
                     } else {
-                        //Thread.sleep(200);
-                        wait();
+                        Thread.sleep(100);
                         logger.info("sleep source.size: " + source.size() + " source.position: " + source.position());
                     }
                 }
