@@ -5,14 +5,12 @@ import com.tino1b2be.dtmfdecoder.DTMFUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
-import ru.amberdata.dtmf.configuration.external.ExternalConfig;
-import ru.amberdata.dtmf.http.IAction;
+import ru.amberdata.dtmf.action.Action;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -23,13 +21,15 @@ public class ChannelManager {
     private static final Logger logger = LogManager.getLogger(ChannelManager.class);
 
     private final Channel ch;
+    private final DTMFContext context;
     // startSymbols -> set<stopSymbols>
     private Map<String, Set<String>> adBlocks = new HashMap<>();
-    private Function<? extends IAction, Boolean> action;
+    private Function<? extends Action, Boolean> action;
     private Set<String> stopLabels = null;
 
-    public ChannelManager(Channel ch) {
+    public ChannelManager(Channel ch, DTMFContext ctx) {
         this.ch = ch;
+        this.context = ctx;
         this.ch.getAdBreak().forEach(b -> {
             String start = b.getCueTone().getStartSymbols();
             String stop  = b.getCueTone().getStopSymbols();
@@ -66,12 +66,7 @@ public class ChannelManager {
         }
         dtmf.setLabelPauseDurr(ch.getPauseLength());
 
-        dtmf.setOnLabelAction(
-                new Consumer<String>() {
-            public void accept(String label) {
-                ChannelManager.this.onLabelStrong(label);
-            }
-        });
+        dtmf.setOnLabelAction(ChannelManager.this::onLabelStrong);
     }
 
     public boolean onLabelStrong(final String label) {

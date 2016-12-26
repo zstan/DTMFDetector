@@ -30,9 +30,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -47,8 +44,6 @@ import com.tino1b2be.audio.TempAudio;
 import com.tino1b2be.audio.WavFileException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.amberdata.dtmf.ChannelManager;
-import ru.amberdata.dtmf.http.IAction;
 
 /**
  * Class to decode DTMF signals in a supported audio file.

@@ -22,6 +22,11 @@ import static ru.amberdata.dtmf.configuration.Utils.initializeAddress;
 public class DatagramChannelStreamer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(DatagramChannelStreamer.class);
+    private final DTMFContext context;
+
+    public DatagramChannelStreamer(DTMFContext ctx) {
+        this.context = ctx;
+    }
 
     private void init() throws Exception {
         InputStream instream =
@@ -30,8 +35,6 @@ public class DatagramChannelStreamer implements Runnable {
         System.out.println(instream);
 
         logger.info( "The server is ready..." );
-
-        DTMFContext context = DTMFContext.getDTMFContext();
 
         for (Channel ch : context.DTMF_CONFIG.getChannel()) { // todo: new thread chain
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
@@ -46,7 +49,7 @@ public class DatagramChannelStreamer implements Runnable {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), ch));
+            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), ch, this.context));
             demuxerThread.start();
 
             while (source.read(buf) != -1) {

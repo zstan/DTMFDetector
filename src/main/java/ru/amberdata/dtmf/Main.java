@@ -1,5 +1,8 @@
 package ru.amberdata.dtmf;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import static org.jcodec.common.io.NIOUtils.readableFileChannel;
 
 /**
@@ -8,7 +11,11 @@ import static org.jcodec.common.io.NIOUtils.readableFileChannel;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        Thread t = new Thread(new DatagramChannelStreamer());
+
+        Injector injector = Guice.createInjector(new DTMFModule());
+        DTMFContext ctx = injector.getInstance(DTMFContext.class);
+
+        Thread t = new Thread(new DatagramChannelStreamer(ctx));
         t.start();
         t.join();
     }

@@ -23,11 +23,13 @@ public class Demuxer implements Runnable {
 
     private final SeekableByteChannel source;
     private final Channel ch;
+    private final DTMFContext context;
     private static final Logger logger = LogManager.getLogger(Demuxer.class);
 
-    public Demuxer (SeekableByteChannel in, Channel ch) {
+    public Demuxer (SeekableByteChannel in, Channel ch, DTMFContext ctx) {
         this.source = in;
         this.ch = ch;
+        this.context = ctx;
     }
 
     @Override
@@ -71,7 +73,7 @@ public class Demuxer implements Runnable {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            ChannelManager chManager = new ChannelManager(ch);
+            ChannelManager chManager = new ChannelManager(this.ch, this.context);
             Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, chManager));
             dtmfDetectorThread.start();
 
