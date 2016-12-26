@@ -2,7 +2,7 @@
 <dtmfDetectorConfig>
     <channel id="100" name="vesti 24">
         <streamAddress>127.0.0.1:1234</streamAddress>
-        <audioPID>69</audioPID>
+        <audioPID>68</audioPID>
         <audioFormat>MPEG</audioFormat>
         <dtmfChannel>auto</dtmfChannel>
         <cutoffNoiseRatio>0.50</cutoffNoiseRatio>

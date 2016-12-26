@@ -3,6 +3,7 @@ package ru.amberdata.dtmf.configuration.dtmf;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class Channel {
     private Integer id;
     @XmlAttribute()
     private String name;
+    @XmlTransient
+    private ru.amberdata.dtmf.configuration.external.Elemental.Channel externalChannel;
 
     public Integer getSymbolLength() {
         return symbolLength;
@@ -105,6 +108,14 @@ public class Channel {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public ru.amberdata.dtmf.configuration.external.Elemental.Channel getExternalChannel() {
+        return externalChannel;
+    }
+
+    public void setExternalChannel(ru.amberdata.dtmf.configuration.external.Elemental.Channel externalChannel) {
+        this.externalChannel = externalChannel;
     }
 }
 

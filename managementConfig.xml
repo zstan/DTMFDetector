@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<managementConfig>
-    <channel id="1" name="channel 1">
+<elementalConfig>
+    <channel id="100" name="channel 1">
         <serverAddress>127.0.0.1</serverAddress>
         <userName>admin</userName>
         <authKey>some_auth_key1</authKey>
@@ -22,4 +22,4 @@
         </adBreak>
     </channel>
     <moduleType>1</moduleType>
-</managementConfig>
+</elementalConfig>

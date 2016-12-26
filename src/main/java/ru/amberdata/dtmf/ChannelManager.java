@@ -5,6 +5,7 @@ import com.tino1b2be.dtmfdecoder.DTMFUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
+import ru.amberdata.dtmf.configuration.external.ExternalConfig;
 import ru.amberdata.dtmf.http.IAction;
 
 import java.util.HashMap;
@@ -42,10 +43,24 @@ public class ChannelManager {
                 adBlocks.put(start, stopLbls);
             }
         });
+        this.wireWithExternalChannel();
+    }
+
+    public void wireWithExternalChannel() {
+
+        for (ru.amberdata.dtmf.configuration.external.Elemental.Channel ch: DTMFContext.MANAGE_CONFIG.getChannel()) {
+            if (ch.getId() == this.getChannel().getId()) {
+                this.getChannel().setExternalChannel(ch);
+                logger.debug("wire channels: {}", this.getChannel().getId());
+                break;
+            }
+        }
+        if (this.getChannel().getExternalChannel() == null)
+            logger.error("channel id: " + this.getChannel() + " not found in external config");
     }
 
     public void initDtmf(DTMFUtil dtmf) throws DTMFDecoderException {
-        dtmf.setMinToneDuration(ch.getSymbolLength()); // todo: fix static method !!!
+        dtmf.setMinToneDuration(ch.getSymbolLength());
         if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
             dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
         }
@@ -79,5 +94,9 @@ public class ChannelManager {
         }
 
         return result;
+    }
+
+    public Channel getChannel() {
+        return ch;
     }
 }

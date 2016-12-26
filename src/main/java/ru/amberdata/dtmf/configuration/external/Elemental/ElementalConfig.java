@@ -1,6 +1,6 @@
 package ru.amberdata.dtmf.configuration.external.Elemental;
 
-import ru.amberdata.dtmf.configuration.external.IExternalConfig;
+import ru.amberdata.dtmf.configuration.external.ExternalConfig;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -15,7 +15,7 @@ import java.util.List;
  * Created by zhenya on 2016-12-24.
  */
 @XmlRootElement
-public class ElementalConfig implements IExternalConfig {
+public class ElementalConfig implements ExternalConfig {
     private List<Channel> channel = new ArrayList<>();
     private String moduleType;
 
