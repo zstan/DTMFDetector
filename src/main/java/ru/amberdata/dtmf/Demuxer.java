@@ -22,59 +22,64 @@ import java.util.Set;
 public class Demuxer implements Runnable {
 
     private final SeekableByteChannel source;
-    private final Channel ch;
-    private final DTMFContext context;
     private static final Logger logger = LogManager.getLogger(Demuxer.class);
+    private final ChannelManager chManager;
 
-    public Demuxer (SeekableByteChannel in, Channel ch, DTMFContext ctx) {
+    public Demuxer (SeekableByteChannel in, ChannelManager manager) {
         this.source = in;
-        this.ch = ch;
-        this.context = ctx;
+        this.chManager = manager;
     }
 
-    @Override
-    public void run() {
+    public ChannelManager getChannelManager() {
+        return chManager;
+    }
+
+    private MPEGDemuxer.MPEGDemuxerTrack initDemuxerTrack() {
         Set<Integer> programs;
         try {
             programs = MTSDemuxer.getProgramsFromChannel(source);
             logger.info("programs pid found: ");
             programs.forEach(System.out::println);
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("empty programs list from stream");
-            return;
+            logger.error("empty programs list found");
+            return null;
         }
 
         MTSDemuxer demuxer = null;
         try {
+            Channel ch = getChannelManager().getChannel();
             if (programs.contains(ch.getAudioPID())) {
-                logger.info("curr audio pid: " + ch.getAudioPID());
+                logger.info("try to initialize audio pid: " + ch.getAudioPID());
                 demuxer = new MTSDemuxer(source, ch.getAudioPID());
             } else {
-                logger.error("chosen audio pid not found: " + ch.getAudioPID());
-                return;
+                logger.error("chosen audio pid not found or initialisation fail, pid: " + ch.getAudioPID());
+                return null;
             }
         } catch (IOException e) {
             logger.error("can`t initialise Demuxer with chosen audio pid");
-            return;
+            return null;
         }
 
         List<? extends MPEGDemuxer.MPEGDemuxerTrack> at = demuxer.getAudioTracks();
         logger.info("found " + at.size() + " audio tracks");
-        MPEGDemuxer.MPEGDemuxerTrack demuxerTrack = at.get(0);
-        logger.info("audio codec detected: " + demuxerTrack.getMeta().getCodec());
-        logger.info("duration: " + demuxerTrack.getMeta().getTotalDuration());
-        logger.info("frames: " + demuxerTrack.getMeta().getTotalFrames());
-        logger.info("aspect ratio: " + demuxerTrack.getMeta().getPixelAspectRatio());
+        MPEGDemuxer.MPEGDemuxerTrack demuxerTrack = at.get(0); // todo: init from config !!!
+        logger.info("audio codec detected: {}", demuxerTrack.getMeta().getCodec());
+        return demuxerTrack;
+    }
 
-        FileChannelWrapper fos;
+    @Override
+    public void run() {
+
+        MPEGDemuxer.MPEGDemuxerTrack demuxerTrack = initDemuxerTrack();
+        if (demuxerTrack == null)
+            return;
+
         try {
             PipedOutputStream pipedOutput = new PipedOutputStream();
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            ChannelManager chManager = new ChannelManager(this.ch, this.context);
-            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, chManager));
+            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, this.getChannelManager()));
             dtmfDetectorThread.start();
 
             long fcount = 0;
@@ -102,7 +107,7 @@ public class Demuxer implements Runnable {
             }
             pipedChannel.close();
             dtmfDetectorThread.interrupt();
-            logger.info("close " + Thread.currentThread().getName());
+            logger.info("close {}", Thread.currentThread().getName());
         } catch (IOException e) {
             e.printStackTrace();
         }

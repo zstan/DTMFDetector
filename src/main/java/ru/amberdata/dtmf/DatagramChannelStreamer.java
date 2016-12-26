@@ -49,7 +49,8 @@ public class DatagramChannelStreamer implements Runnable {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), ch, this.context));
+            ChannelManager chManager = new ChannelManager(ch, this.context);
+            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), chManager));
             demuxerThread.start();
 
             while (source.read(buf) != -1) {
