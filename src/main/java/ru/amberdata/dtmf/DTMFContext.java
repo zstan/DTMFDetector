@@ -17,7 +17,6 @@ public class DTMFContext {
 
     private static final String DTMF_CONF = "dtmfConfig.xml";
     private static final String MGMT_CONF = "managementConfig.xml";
-    private static DTMFContext instance;
     private Action externalAction;
 
     public static final DTMFDetectorConfig DTMF_CONFIG = Utils.importConfiguration(DTMF_CONF, DTMFDetectorConfig.class);
@@ -29,7 +28,6 @@ public class DTMFContext {
 
     @Inject
     public void setExternalAction(@Named("externalAction") Action externalAction) {
-        System.out.println("setExternalAction");
         this.externalAction = externalAction;
     }
 

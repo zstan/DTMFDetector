@@ -11,7 +11,7 @@ import ru.amberdata.dtmf.action.HttpPostAction;
  */
 public class DTMFModule extends AbstractModule {
 
-    private Action httpAction = new HttpPostAction();
+    //private Action httpAction = new HttpPostAction();
 
     @Override
     protected void configure() {

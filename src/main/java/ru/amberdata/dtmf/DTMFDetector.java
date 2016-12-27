@@ -23,12 +23,10 @@ public class DTMFDetector implements Runnable {
     private DTMFUtil dtmf;
     private static int HEADER_SIZE = 1000;
     private final ChannelManager chManager;
-    //private final ExternalConfig externalManager;
 
     public DTMFDetector(InputStream in, ChannelManager chManager) {
         this.source = in;
         this.chManager = chManager;
-        //this.externalManager = new ExternalManager();
     }
 
     @Override

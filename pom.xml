@@ -185,4 +185,53 @@
 			<version>2.2.3-1</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>uber-jar</id>
+
+			<build>
+
+				<!--<resources>
+					<resource>
+						<directory>${project.basedir}/src/test/resources/ru/yandex/hadoop/yt/export/</directory>
+						<includes>
+							<include>libsnappy.so.1</include>
+							<include>libhadoop.so</include>
+						</includes>
+					</resource>
+				</resources>-->
+
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>ru.amberdata.dtmf.Main</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<finalName>dtmfDetector</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+
+						<executions>
+							<execution>
+								<id>build-uber-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

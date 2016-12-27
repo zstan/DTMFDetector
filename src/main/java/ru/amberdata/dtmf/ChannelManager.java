@@ -70,21 +70,31 @@ public class ChannelManager {
     }
 
     public boolean onLabelStrong(final String label) {
-        boolean result = false;
-        logger.debug("label event: " + label);
 
-        Set<String> stopLbls = adBlocks.get(label);
-        if (stopLbls != null) {
-            stopLabels = stopLbls;
-            logger.info("start label found: " + label + " call some callback...");
-            result = true;
-        } else {
-            if (stopLabels != null && stopLabels.contains(label)) {
-                stopLabels = null;
-                logger.info("stop label found: " + label + " call some callback...");
+        boolean result = false;
+
+        if (this.getChannel().getExternalChannel() == null) {
+            logger.error("channel {} has no external channel in elemental config", this.getChannel().getId());
+        }
+        else {
+            logger.debug("label event: " + label);
+
+            Set<String> stopLbls = adBlocks.get(label);
+            if (stopLbls != null) {
+                stopLabels = stopLbls;
+                logger.info("start label found: " + label + " post http callback, user: {}, server: {}",
+                        this.getChannel().getExternalChannel().getUserName(),
+                        this.getChannel().getExternalChannel().getServerAddress());
+                context.getExternalAction().apply(this.getChannel());
                 result = true;
             } else {
-                logger.info("stop without start label or unknown label found: " + label);
+                if (stopLabels != null && stopLabels.contains(label)) {
+                    stopLabels = null;
+                    logger.info("stop label found: " + label + " no action registered");
+                    result = true;
+                } else {
+                    logger.info("stop without start label or unknown label found: " + label);
+                }
             }
         }
 

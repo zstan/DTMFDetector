@@ -882,9 +882,6 @@ public class DTMFUtil {
 		String[] seq2 = { "", "" };
         long framesCount = 0;
 
-		System.out.println("LabelPauseDurr: " + getLabelPauseDurr());
-		System.out.println("getMillisecondsPerFrame: " + getMillisecondsPerFrame());
-
 		do {
 			try {
 				curr = decodeNextFrameStereo();
@@ -1301,6 +1298,9 @@ public class DTMFUtil {
 		int numChannels = audio.getNumChannels();
 		if (numChannels > 2 || numChannels <= 0)
 			throw new DTMFDecoderException("Can only decode mono and stereo files.");
+
+		logger.info("LabelPauseDurr: {}", getLabelPauseDurr());
+		logger.info("getMillisecondsPerFrame: {}", getMillisecondsPerFrame());
 
 		switch (labelLen) {
 			case DECODE_40:
