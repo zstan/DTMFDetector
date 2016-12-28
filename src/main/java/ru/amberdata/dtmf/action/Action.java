@@ -6,5 +6,9 @@ import ru.amberdata.dtmf.configuration.dtmf.Channel;
  * Created by zstan on 20.12.16.
  */
 public interface Action {
-    boolean apply(Channel data);
+    /*
+    @param  data    channel
+    @param  adId    adid
+     */
+    boolean apply(Channel data, Integer adId);
 }

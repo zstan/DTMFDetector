@@ -2,6 +2,7 @@ package ru.amberdata.dtmf;
 
 import com.tino1b2be.dtmfdecoder.DTMFDecoderException;
 import com.tino1b2be.dtmfdecoder.DTMFUtil;
+import org.apache.commons.math3.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
@@ -23,9 +24,9 @@ public class ChannelManager {
     private final Channel ch;
     private final DTMFContext context;
     // startSymbols -> set<stopSymbols>
-    private Map<String, Set<String>> adBlocks = new HashMap<>();
+    private Map<String, Pair<Integer, String>> adBlocks = new HashMap<>();
     private Function<? extends Action, Boolean> action;
-    private Set<String> stopLabels = null;
+    private Pair<Integer, String> stopLabel = null;
 
     public ChannelManager(Channel ch, DTMFContext ctx) {
         this.ch = ch;
@@ -33,15 +34,11 @@ public class ChannelManager {
         this.ch.getAdBreak().forEach(b -> {
             String start = b.getCueTone().getStartSymbols();
             String stop  = b.getCueTone().getStopSymbols();
-            Set<String> val = adBlocks.get(start);
-            if (val != null)
-                val.add(stop);
-            else {
-                Set<String> stopLbls = new HashSet<>();
-                if (stop != null)
-                    stopLbls.add(stop);
-                adBlocks.put(start, stopLbls);
-            }
+            Integer id = b.getId();
+            Pair<Integer, String> val = new Pair<>(id, stop);
+            if (adBlocks.get(start) != null)
+                logger.error("found start label duplicate for channel: {}-{}, check config", ch.getId(), ch.getName());
+            adBlocks.put(start, val);
         });
         this.wireWithExternalChannel();
     }
@@ -79,17 +76,17 @@ public class ChannelManager {
         else {
             logger.debug("label event: " + label);
 
-            Set<String> stopLbls = adBlocks.get(label);
-            if (stopLbls != null) {
-                stopLabels = stopLbls;
+            Pair<Integer, String> stopLbl = adBlocks.get(label);
+            if (stopLbl != null) {
+                stopLabel = stopLbl;
                 logger.info("start label found: " + label + " post http callback, user: {}, server: {}",
                         this.getChannel().getExternalChannel().getUserName(),
                         this.getChannel().getExternalChannel().getServerAddress());
-                context.getExternalAction().apply(this.getChannel());
+                context.getExternalAction().apply(this.getChannel(), stopLbl.getKey());
                 result = true;
             } else {
-                if (stopLabels != null && stopLabels.contains(label)) {
-                    stopLabels = null;
+                if (stopLabel != null && stopLabel.getValue().equals(label)) {
+                    stopLabel = null;
                     logger.info("stop label found: " + label + " no action registered");
                     result = true;
                 } else {
