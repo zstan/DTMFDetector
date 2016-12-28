@@ -95,7 +95,7 @@ public class Demuxer implements Runnable {
                         //if (fcount % 10 == 0)
                         //    System.out.print("*");
                         if (fcount % 20 == 0)
-                            System.out.println(fcount + " " + data.remaining());
+                            logger.debug("frames decoded: {} data read: {}", fcount, data.remaining());
                         pipedChannel.write(data);
                     } else {
                         Thread.sleep(100);

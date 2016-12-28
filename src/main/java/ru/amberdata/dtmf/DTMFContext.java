@@ -15,8 +15,8 @@ import ru.amberdata.dtmf.configuration.external.ExternalConfig;
 @Singleton
 public class DTMFContext {
 
-    private static final String DTMF_CONF = "dtmfConfig.xml";
-    private static final String MGMT_CONF = "managementConfig.xml";
+    private static final String DTMF_CONF = "./dtmfConfig.xml";
+    private static final String MGMT_CONF = "./managementConfig.xml";
     private Action externalAction;
 
     public static final DTMFDetectorConfig DTMF_CONFIG = Utils.importConfiguration(DTMF_CONF, DTMFDetectorConfig.class);

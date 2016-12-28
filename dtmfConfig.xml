@@ -8,13 +8,13 @@
         <cutoffNoiseRatio>0.50</cutoffNoiseRatio>
         <symbolLength>70</symbolLength>
         <pauseLength>70</pauseLength>
-        <adBreak id="1">
+        <adBreak id="2">
             <cueTone>
                 <startSymbols>1234</startSymbols>
                 <stopSymbols>89</stopSymbols>
             </cueTone>
         </adBreak>
-        <adBreak id="2">
+        <adBreak id="1">
             <cueTone>
                 <startSymbols>123</startSymbols>
                 <stopSymbols>78</stopSymbols>
