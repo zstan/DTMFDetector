@@ -9,6 +9,7 @@ import ru.amberdata.dtmf.ChannelManager;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 /**
@@ -23,6 +24,7 @@ public class HttpPostAction implements Action {
             "    <event_id>%d</event_id>\n" +
             "    <splice_offset>%d</splice_offset>\n" +
             "</cue_point>";
+    private int currentDay = LocalDateTime.now().getDayOfYear();
 
     ThreadLocal<HttpClient> client = new ThreadLocal<HttpClient>() {
         @Override
@@ -31,8 +33,26 @@ public class HttpPostAction implements Action {
         }
     };
 
-    private static String formPostXML(ru.amberdata.dtmf.configuration.external.Elemental.Channel ch) {
-        return String.format(XML_STR, ch.getId(), ch.)
+    ThreadLocal<Integer> counter = new ThreadLocal<Integer>() {
+        @Override
+        public Integer initialValue() {
+            return 0;
+        }
+    };
+
+    private int getCounter() {
+        int day = LocalDateTime.now().getDayOfYear();
+        if (day != currentDay) {
+            counter.set(0);
+            currentDay = day;
+        }
+        int id = counter.get();
+        counter.set(id + 1);
+        return id;
+    }
+
+    private String formPostXML(ru.amberdata.dtmf.configuration.external.Elemental.Channel ch) {
+        return String.format(XML_STR, this.getCounter(), ch.getId());
     }
 
     @Override
