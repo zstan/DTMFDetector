@@ -12,8 +12,10 @@ import ru.amberdata.dtmf.configuration.external.Elemental.AdBreak;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.security.MessageDigest;
 
 /**
  * Created by zhenya on 2016-12-17.
@@ -28,6 +30,7 @@ public class HttpPostAction implements Action, AutoCloseable {
             "    <splice_offset>%d</splice_offset>\n" +
             "</cue_point>";
     private int currentDay = LocalDateTime.now().getDayOfYear();
+    private static final String EXPIRES = "0";
 
     ThreadLocal<HttpClient> client = new ThreadLocal<HttpClient>() {
         @Override
@@ -68,6 +71,23 @@ public class HttpPostAction implements Action, AutoCloseable {
         }
     }
 
+    private String formMD5(Channel ch) {
+        //md5(api_key + md5(url + X-Auth-User + api_key + X-Auth_expires))
+        try {
+            String uri = ch.getExternalChannel().getServerAddress();
+            String apiKey = ch.getExternalChannel().getAuthKey();
+            String user = ch.getExternalChannel().getUserName();
+            String summary = uri + user + apiKey + EXPIRES;
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            byte[] dig = md5.digest(summary.getBytes());
+            dig = md5.digest((uri + new String(dig)).getBytes());
+            return new String(dig);
+        } catch (NoSuchAlgorithmException e) {
+            logger.error(e);
+        }
+        return "";
+    }
+
     @Override
     public boolean apply(Channel ch, Integer adId) {
         String uri = ch.getExternalChannel().getServerAddress();
@@ -76,8 +96,8 @@ public class HttpPostAction implements Action, AutoCloseable {
         logger.info("try to send POST into: {}", uri);
         PostMethod postMethod = new PostMethod(uri);
         postMethod.addRequestHeader("X-Auth-User", ch.getExternalChannel().getUserName());
-        postMethod.addRequestHeader("X-Auth-Expires", "0");
-        postMethod.addRequestHeader("X-Auth-Key", ch.getExternalChannel().getAuthKey());
+        postMethod.addRequestHeader("X-Auth-Expires", EXPIRES);
+        postMethod.addRequestHeader("X-Auth-Key", this.formMD5(ch));
         postMethod.addRequestHeader("Accept", "application/xml");
         postMethod.addRequestHeader("Content-type", "application/xml");
         RequestEntity re = null;

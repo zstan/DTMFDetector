@@ -86,6 +86,7 @@ public class DTMFUtil {
 	private int frameBufferSize;
 	private int labelPauseDurr;
 	private Consumer<String> onLabelAction;
+    long framesCount = 0;
 
 	private static int[] freqIndicies;
 
@@ -780,6 +781,9 @@ public class DTMFUtil {
 			char curr;
 			try {
 				curr = decodeNextFrameMono();
+                if (onLabelReact(seq2)) {
+                    seq2 = "";
+                }
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -834,6 +838,9 @@ public class DTMFUtil {
 
 			try {
 				curr = decodeNextFrameStereo();
+                if (onLabelReact(seq2)) {
+                    seq2 = new String[]{"", ""};
+                }
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -843,7 +850,6 @@ public class DTMFUtil {
 				if (curr[0] == prev[0]) { // eliminate false positives
 					if (curr[0] != prev2[0]) {
 						seq2[0] += curr[0];
-						System.out.println("seq2[0]:" + seq2[0]);
 					}
 				}
 			}
@@ -855,7 +861,6 @@ public class DTMFUtil {
 				if (curr[1] == prev[1]) { // eliminate false positives
 					if (curr[1] != prev2[1]) {
 						seq2[1] += curr[1];
-						System.out.println("seq2[1]:" + seq2[1]);
 					}
 				}
 			}
@@ -872,7 +877,7 @@ public class DTMFUtil {
 	 * @return String representation of the sequence of DTMF tones represented
 	 *         in the wav file
 	 * @throws IOException
-	 * @throws WavFileException
+	 * @throws IOException, AudioFileException
 	 */
 	private void decodeStereo60() throws IOException, AudioFileException {
 		char curr[];
@@ -880,26 +885,13 @@ public class DTMFUtil {
 		char[] prev2 = { '_', '_' };
 		char[] prev3 = { '_', '_' };
 		String[] seq2 = { "", "" };
-        long framesCount = 0;
 
 		do {
 			try {
 				curr = decodeNextFrameStereo();
-				if (!seq2[1].isEmpty() || !seq2[0].isEmpty()) {  // todo: channels here !
-					++framesCount;
-					if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 2) {
-						String label;
-						if (seq2[0].isEmpty()) {
-							label = seq2[1];
-							seq2[1] = "";
-						} else {
-							label = seq2[0];
-							seq2[0] = "";
-						}
-						framesCount = 0;
-						labelReact(label);
-					}
-				}
+                if (onLabelReact(seq2)) {
+                    seq2 = new String[]{"", ""};
+                }
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -960,6 +952,9 @@ public class DTMFUtil {
 
 			try {
 				curr = decodeNextFrameStereo();
+                if (onLabelReact(seq2)) {
+                    seq2 = new String[]{"", ""};
+                }
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -1018,6 +1013,9 @@ public class DTMFUtil {
 
 			try {
 				curr = decodeNextFrameStereo();
+                if (onLabelReact(seq2)) {
+                    seq2 = new String[]{"", ""};
+                }
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -1558,4 +1556,37 @@ public class DTMFUtil {
 	public void setOnLabelAction(Consumer<String> onLabelAction) {
 		this.onLabelAction = onLabelAction;
 	}
+
+    private boolean onLabelReact(String[] seq2) {
+        if (!seq2[1].isEmpty() || !seq2[0].isEmpty()) {
+            ++framesCount;
+            if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 2) {
+                String label;
+                if (seq2[0].isEmpty()) {
+                    label = seq2[1];
+                    //seq2[1] = "";
+                } else {
+                    label = seq2[0];
+                    //seq2[0] = "";
+                }
+                framesCount = 0;
+                labelReact(label);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean onLabelReact(String seq2) {
+        if (!seq2.isEmpty()) {
+            ++framesCount;
+            if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 2) {
+                framesCount = 0;
+                labelReact(seq2);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
