@@ -1,0 +1,9 @@
+/var/log/dtmfdetector/dtmfdetector.log 
+{
+        rotate 7
+        daily
+        compress
+        missingok
+        notifempty
+        delaycompress
+}

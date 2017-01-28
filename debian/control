@@ -1,0 +1,12 @@
+Source: dtmfdetector
+Section: unknown
+Priority: extra
+Maintainer: Evgeny Stanilovsky <stanilovsky@g[remove]mail.ru>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.7.2
+
+Package: beetest
+Architecture: all
+Depends: ${misc:Depends}, 
+Description: dtmf label detector
+ dtmf label detector utility

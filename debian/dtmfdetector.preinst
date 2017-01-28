@@ -1,0 +1,30 @@
+#!/bin/bash
+
+PROGRAM_NAME=dtmfdetector
+
+check_log_dir() {
+    mkdir -p /var/log/${PROGRAM_NAME}/
+    touch /var/log/${PROGRAM_NAME}/${PROGRAM_NAME}.log
+    #chown ${USER_NAME} /var/log/${PROGRAM_NAME}
+}
+
+case "$1" in
+    install)
+
+        check_log_dir
+    ;;
+
+    upgrade)
+
+        check_log_dir
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+

@@ -1,0 +1,99 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          airflow-worker
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Should-Start:      redis-server
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PROG="/usr/local/bin/airflow"
+PID_PATH="/var/run"
+PID_NAME="dtmfdetector.pid"
+LOG_FILE="/var/log/dtmfdetector/dtmfdetector.log"
+
+. /lib/lsb/init-functions
+
+
+STATUS_RUNNING=0
+STATUS_DEAD=1
+STATUS_DEAD_AND_LOCK=2
+STATUS_NOT_RUNNING=3
+
+start() {
+    start-stop-daemon --start --background --pidfile "$PID_PATH/$PID_NAME" --make-pidfile --user $AIRFLOW_USER --chuid $AIRFLOW_USER --startas /bin/bash -- -c "exec $PROG $PROG_ARGS > $LOG_FILE 2>&1"
+}
+
+stop() {
+    start-stop-daemon --stop --pidfile "$PID_PATH/$PID_NAME" --retry 10
+    rm -f $PID_PATH/$PID_NAME
+}
+
+check_user() {
+    if [ "$(id -u)" != "0" ]; then
+        echo "This script must be run as root" 1>&2
+        exit 1
+    fi
+}
+
+checkstatusofproc(){
+  pidofproc -p $PID_PATH/$PID_NAME $PROG > /dev/null
+}
+      
+checkstatus(){
+  checkstatusofproc
+  status=$?
+      
+  case "$status" in
+    $STATUS_RUNNING)
+      log_success_msg "${DESC} is running"
+      ;;
+    $STATUS_DEAD)
+      log_failure_msg "${DESC} is dead and pid file exists"
+      ;;
+    $STATUS_DEAD_AND_LOCK)
+      log_failure_msg "${DESC} is dead and lock file exists"
+      ;;
+    $STATUS_NOT_RUNNING)
+      log_failure_msg "${DESC} is not running"
+      ;;
+    *)
+      log_failure_msg "${DESC} status is unknown"
+      ;;
+  esac
+  return $status
+}
+
+# Other stuff here
+
+case "$1" in
+    start)
+        check_user
+        start
+        exit 0
+    ;;
+    stop)
+        check_user
+        stop
+        exit 0
+    ;;
+    reload|restart|force-reload)
+        stop
+        sleep 2
+        start
+        exit 0
+    ;;
+    status)
+        checkstatus
+        exit $?
+    ;;
+    **)
+        echo "Usage: $0 {start|stop|reload|status}" 1>&2
+        exit 1
+    ;;
+esac
