@@ -85,6 +85,7 @@ public class DTMFUtil {
 	private int frameSize;
 	private int frameBufferSize;
 	private int labelPauseDurr;
+	private int symbolLength;
 	private Consumer<String> onLabelAction;
     long framesCount = 0;
 
@@ -837,10 +838,10 @@ public class DTMFUtil {
 		do {
 
 			try {
-				curr = decodeNextFrameStereo();
                 if (onLabelReact(seq2)) {
                     seq2 = new String[]{"", ""};
                 }
+				curr = decodeNextFrameStereo();
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -888,10 +889,10 @@ public class DTMFUtil {
 
 		do {
 			try {
-				curr = decodeNextFrameStereo();
                 if (onLabelReact(seq2)) {
                     seq2 = new String[]{"", ""};
                 }
+				curr = decodeNextFrameStereo();
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -951,10 +952,10 @@ public class DTMFUtil {
 		do {
 
 			try {
-				curr = decodeNextFrameStereo();
                 if (onLabelReact(seq2)) {
                     seq2 = new String[]{"", ""};
                 }
+				curr = decodeNextFrameStereo();
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -1012,10 +1013,10 @@ public class DTMFUtil {
 		do {
 
 			try {
-				curr = decodeNextFrameStereo();
                 if (onLabelReact(seq2)) {
                     seq2 = new String[]{"", ""};
                 }
+				curr = decodeNextFrameStereo();
 			} catch (DTMFDecoderException e) {
 				break;
 			}
@@ -1547,6 +1548,14 @@ public class DTMFUtil {
 
 	public void setLabelPauseDurr(int labelPauseDurr) {
 		this.labelPauseDurr = labelPauseDurr;
+	}
+
+	public int getSymbolLength() {
+		return symbolLength;
+	}
+
+	public void setSymbolLength(int symbolLength) {
+		this.symbolLength = symbolLength;
 	}
 
 	public Consumer<String> getOnLabelAction() {

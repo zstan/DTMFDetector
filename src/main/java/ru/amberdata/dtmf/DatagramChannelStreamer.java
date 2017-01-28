@@ -32,11 +32,9 @@ public class DatagramChannelStreamer implements Runnable {
         InputStream instream =
                 Main.class.getClassLoader().getResourceAsStream("log4j2.xml");
 
-        System.out.println(instream);
-
         logger.info( "The server is ready..." );
 
-        for (Channel ch : context.DTMF_CONFIG.getChannel()) { // todo: new thread chain
+        for (Channel ch : context.getDtmfConfig().getChannel()) { // todo: new thread chain
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 

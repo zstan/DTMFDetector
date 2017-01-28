@@ -43,9 +43,9 @@ public class DTMFDetector implements Runnable {
             String[] sequence = dtmf.getDecoded();
 
             if (dtmf.getChannelCount() == 1) {
-                System.out.println("The DTMF tones found in the given file are: " + sequence[0]);
+                logger.debug("The DTMF tones found in the given file are: " + sequence[0]);
             } else {
-                System.out.println("The DTMF tones found in channel one are: " + sequence[0]
+                logger.debug("The DTMF tones found in channel one are: " + sequence[0]
                         + "\nThe DTMF tones found in channel two are: " + sequence[1]);
             }
 

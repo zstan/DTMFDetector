@@ -45,7 +45,7 @@ public class ChannelManager {
 
     public void wireWithExternalChannel() {
 
-        for (ru.amberdata.dtmf.configuration.external.Elemental.Channel ch: DTMFContext.MANAGE_CONFIG.getChannel()) {
+        for (ru.amberdata.dtmf.configuration.external.Elemental.Channel ch: DTMFContext.getManageConfig().getChannel()) {
             if (ch.getId() == this.getChannel().getId()) {
                 this.getChannel().setExternalChannel(ch);
                 logger.debug("wire channels: {}", this.getChannel().getId());
@@ -62,6 +62,7 @@ public class ChannelManager {
             dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
         }
         dtmf.setLabelPauseDurr(ch.getPauseLength());
+        dtmf.setSymbolLength(ch.getSymbolLength());
 
         dtmf.setOnLabelAction(ChannelManager.this::onLabelStrong);
     }

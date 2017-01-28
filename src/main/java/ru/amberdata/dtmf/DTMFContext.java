@@ -19,9 +19,9 @@ public class DTMFContext {
     private static final String MGMT_CONF = "./managementConfig.xml";
     private Action externalAction;
 
-    public static final DTMFDetectorConfig DTMF_CONFIG = Utils.importConfiguration(DTMF_CONF, DTMFDetectorConfig.class);
+    private static final DTMFDetectorConfig DTMF_CONFIG = Utils.importConfiguration(DTMF_CONF, DTMFDetectorConfig.class);
 
-    public static final ExternalConfig MANAGE_CONFIG = Utils.importConfiguration(MGMT_CONF, ElementalConfig.class);
+    private static final ExternalConfig MANAGE_CONFIG = Utils.importConfiguration(MGMT_CONF, ElementalConfig.class);
 
     public DTMFContext() {
     }
@@ -33,5 +33,13 @@ public class DTMFContext {
 
     public Action getExternalAction() {
         return externalAction;
+    }
+
+    public static DTMFDetectorConfig getDtmfConfig() {
+        return DTMF_CONFIG;
+    }
+
+    public static ExternalConfig getManageConfig() {
+        return MANAGE_CONFIG;
     }
 }
