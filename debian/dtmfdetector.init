@@ -15,6 +15,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 PROG="/opt/dtmfdetector/dtmfDetector.jar"
 PROG_ARGS="-Dlog4j.configurationFile=/opt/dtmfdetector/log4j2.xml -jar "
 PID_PATH="/var/run"
+WORKING_DIR="/opt/dtmfdetector"
 PID_NAME="dtmfdetector.pid"
 LOG_FILE="/var/log/dtmfdetector/dtmfdetector.log"
 
@@ -27,7 +28,8 @@ STATUS_DEAD_AND_LOCK=2
 STATUS_NOT_RUNNING=3
 
 start() {
-    start-stop-daemon --start --background --pidfile "$PID_PATH/$PID_NAME" --make-pidfile --startas /bin/bash -- -c "exec java $PROG_ARGS $PROG > $LOG_FILE 2>&1"
+    cd /opt/dtmfdetector
+    start-stop-daemon --start --background --pidfile "$PID_PATH/$PID_NAME" --make-pidfile --startas /bin/bash --chdir $WORKING_DIR -- -c "exec java $PROG_ARGS $PROG > $LOG_FILE 2>&1"
 }
 
 stop() {
