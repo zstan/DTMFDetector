@@ -1,2 +1,4 @@
-../target/dtmfDetector.jar /opt/dtmfdetector/
-
+./target/dtmfDetector.jar opt/dtmfdetector/
+./log4j2.xml opt/dtmfdetector
+./dtmfConfig_example.xml opt/dtmfdetector/
+./managementConfig_example.xml opt/dtmfdetector/

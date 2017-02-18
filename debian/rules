@@ -8,6 +8,7 @@ install:
 	dh_installinit
 	dh_gencontrol
 	dh_installdeb
+	dh_installlogrotate
 	dh_fixperms
 	dh_builddeb
 

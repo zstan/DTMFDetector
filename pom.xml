@@ -194,17 +194,6 @@
 			<id>uber-jar</id>
 
 			<build>
-
-				<!--<resources>
-					<resource>
-						<directory>${project.basedir}/src/test/resources/ru/yandex/hadoop/yt/export/</directory>
-						<includes>
-							<include>libsnappy.so.1</include>
-							<include>libhadoop.so</include>
-						</includes>
-					</resource>
-				</resources>-->
-
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
