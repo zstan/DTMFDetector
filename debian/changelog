@@ -1,3 +1,9 @@
+dtmfdetector (0.2) unstable; urgency=medium
+
+  * identify marker position.
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Sun, 05 Mar 2017 12:35:20 +0300
+
 dtmfdetector (0.1) unstable; urgency=low
 
   * Initial release
