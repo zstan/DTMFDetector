@@ -7,8 +7,8 @@ Based on https://github.com/tino1b2be/DTMF-Decoder
 Features
 ================================
 * Listen TS UDP incoming traffic.
-* Detects DTMF sequence labels (setting by config).
-* After detection complete sends POST request (setting by config).
+* Detects [DTMF](https://en.wikipedia.org/wiki/Dual-tone_multi-frequency_signaling "dtmf desc") sequence labels (setting by config).
+* After detection event occur, sends POST request (setting by config).
 
 Common config example:
 
