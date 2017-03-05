@@ -148,10 +148,9 @@ public class NIOUtils {
     }
 
     public static int readFromChannel(ReadableByteChannel channel, ByteBuffer buffer) throws IOException {
-        int rem = buffer.position();
         while (channel.read(buffer) != -1 && buffer.hasRemaining())
             ;
-        return buffer.position() - rem;
+        return buffer.position();
     }
 
     public static void write(ByteBuffer to, ByteBuffer from) {

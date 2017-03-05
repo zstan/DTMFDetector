@@ -3,6 +3,7 @@ package ru.amberdata.dtmf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.FileChannelWrapper;
+import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.Packet;
 import org.jcodec.containers.mps.MPEGDemuxer;
@@ -34,12 +35,31 @@ public class Demuxer implements Runnable {
         return chManager;
     }
 
+    private boolean identMarkerPosition(SeekableByteChannel channel) throws IOException {
+        int markerSize = 188;
+        int probeSize = 1;
+        ByteBuffer buffer = ByteBuffer.allocateDirect(probeSize);
+        if (NIOUtils.readFromChannel(channel, buffer) != probeSize)
+            return false;
+        buffer.flip();
+        while (buffer.get() != 0x47) {
+            buffer.clear();
+            if (NIOUtils.readFromChannel(channel, buffer) != probeSize)
+                return false;
+            buffer.flip();
+        }
+        buffer = ByteBuffer.allocateDirect(markerSize - probeSize);
+        if (NIOUtils.readFromChannel(channel, buffer) != markerSize - probeSize) // just skip 187 bytes
+            return false;
+        return true;
+    }
+
     private MPEGDemuxer.MPEGDemuxerTrack initDemuxerTrack() {
         Set<Integer> programs;
         try {
             programs = MTSDemuxer.getProgramsFromChannel(source);
             logger.info("programs pid found: ");
-            programs.forEach(System.out::println);
+            programs.forEach(logger::info);
         } catch (IOException e) {
             logger.error("empty programs list found");
             return null;
@@ -69,7 +89,11 @@ public class Demuxer implements Runnable {
 
     @Override
     public void run() {
-
+        try {
+            logger.info("Identify marker position: {}", identMarkerPosition(this.source));
+        } catch (IOException e) {
+            logger.error(e);
+        }
         MPEGDemuxer.MPEGDemuxerTrack demuxerTrack = initDemuxerTrack();
         if (demuxerTrack == null)
             return;
