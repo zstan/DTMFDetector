@@ -22,25 +22,25 @@ public class DatagramChannelWrapper implements SeekableByteChannel {
 
     @Override
     public long position() throws IOException {
-        //System.out.println("not supported: position " + position);
+        System.out.println("DatagramChannelWrapper not supported: position " + position);
         return position;
     }
 
     @Override
     public SeekableByteChannel setPosition(long newPosition) throws IOException {
-        //System.out.println("not supported: newPosition " + newPosition);
+        System.out.println("DatagramChannelWrapper not supported: newPosition " + newPosition);
         return this;
     }
 
     @Override
     public long size() throws IOException {
-        //System.out.println("not supported: size");
+        System.out.println("DatagramChannelWrapper not supported: size");
         return position;
     }
 
     @Override
     public SeekableByteChannel truncate(long size) throws IOException {
-        //System.out.println("not supported: truncate");
+        System.out.println("DatagramChannelWrapper not supported: truncate");
         return null;
     }
 
@@ -48,12 +48,10 @@ public class DatagramChannelWrapper implements SeekableByteChannel {
     public int read(ByteBuffer dst) throws IOException {
         dst.clear();
         ch.receive(dst);
-        int rem = dst.remaining();
-        //dst.flip();
-        position += dst.position();
+        int pos = dst.position();
+        position += pos;
 
-        return dst.position() > 0? rem : -1;
-        //return dst.position();
+        return dst.position() > 0? pos : -1;
     }
 
     @Override

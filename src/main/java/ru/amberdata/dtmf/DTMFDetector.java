@@ -21,7 +21,7 @@ public class DTMFDetector implements Runnable {
     private static final Logger logger = LogManager.getLogger(DTMFDetector.class);
     private final InputStream source;
     private DTMFUtil dtmf;
-    private static int HEADER_SIZE = 1000;
+    private static int HEADER_SIZE = 188*10;
     private final ChannelManager chManager;
 
     public DTMFDetector(InputStream in, ChannelManager chManager) {

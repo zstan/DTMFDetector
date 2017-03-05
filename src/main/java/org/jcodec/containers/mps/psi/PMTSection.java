@@ -1,5 +1,6 @@
 package org.jcodec.containers.mps.psi;
 import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.logging.Logger;
 import org.jcodec.containers.mps.MPSUtils;
 import org.jcodec.containers.mps.MPSUtils.MPEGMediaDescriptor;
 import org.jcodec.containers.mps.MTSStreamType;
@@ -63,7 +64,8 @@ public class PMTSection extends PSISection {
             int wn = data.getShort() & 0xffff;
             int elementaryPid = wn & 0x1fff;
 
-//            Logger.info(String.format("Elementary stream: [%d,%d]", streamType, elementaryPid));
+            Logger.info(String.format("pmt stream info: [type: %d, pid: %d]", streamType, elementaryPid));
+            System.out.println(String.format("pmt stream info: [type: %d, pid: %d]", streamType, elementaryPid));
 
             int wn1 = data.getShort() & 0xffff;
             int esInfoLength = wn1 & 0xfff;

@@ -11,7 +11,7 @@ public class PipedChannelWrapper implements SeekableByteChannel {
 
     private final InputStream in;
     private long pos = 0;
-    ByteBuffer buf = ByteBuffer.allocate(138_000_0);
+    ByteBuffer buf = ByteBuffer.allocateDirect(188_000_0);
     boolean readFomBuf = false;
 
     public PipedChannelWrapper(InputStream in) {
@@ -86,6 +86,5 @@ public class PipedChannelWrapper implements SeekableByteChannel {
 
     @Override
     public void close() throws IOException {
-
     }
 }
