@@ -15,13 +15,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.System;
 import java.nio.ByteBuffer;
-import net.sourceforge.jaad.aac.AACException;
+/*import net.sourceforge.jaad.aac.AACException;
 import net.sourceforge.jaad.aac.syntax.BitStream;
 import net.sourceforge.jaad.aac.syntax.IBitStream;
 import net.sourceforge.jaad.aac.syntax.NIOBitStream;
+*/
 
 public class TestBitReader {
-    @Test
+    /*@Test
     public void testEOF() throws Exception {
         byte[] src = new byte[] { b("10011000") };
         boolean eof = false;
@@ -407,4 +408,5 @@ public class TestBitReader {
     private int i(String str) {
         return (int) Long.parseLong(str, 2);
     }
+    */
 }
