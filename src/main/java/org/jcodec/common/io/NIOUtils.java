@@ -7,6 +7,7 @@ import org.jcodec.common.ArrayUtil;
 import org.jcodec.common.AutoFileChannelWrapper;
 import org.jcodec.platform.Platform;
 
+import javax.media.rtp.InvalidSessionAddressException;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -357,6 +358,10 @@ public class NIOUtils {
 
     public static DatagramChannelWrapper readableFileChannel(InetSocketAddress ch) throws IOException {
         return new DatagramChannelWrapper(ch);
+    }
+
+    public static RTPChannelWrapper readableRTPChannel(InetSocketAddress ch) throws IOException, InvalidSessionAddressException {
+        return new RTPChannelWrapper(ch);
     }
 
     public static PipedChannelWrapper readableFileChannel(InputStream ch) throws FileNotFoundException {

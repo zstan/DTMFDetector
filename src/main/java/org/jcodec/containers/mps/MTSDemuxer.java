@@ -47,6 +47,7 @@ public class MTSDemuxer implements MPEGDemuxer {
     private static volatile boolean exit = false;
 
     public static Set<Integer> getProgramsFromChannel(SeekableByteChannel src) throws IOException {
+        // http://www.etherguidesystems.com/help/sdos/mpeg/semantics/mpeg-2/stream_type.aspx
         long rem = src.position();
         Set<Integer> guids = new HashSet<Integer>();
         for (int i = 0; guids.size() == 0 || i < guids.size() * 500; i++) {

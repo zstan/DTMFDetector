@@ -14,6 +14,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 
 import static org.jcodec.common.io.NIOUtils.readableFileChannel;
+import static org.jcodec.common.io.NIOUtils.readableRTPChannel;
 import static ru.amberdata.dtmf.configuration.Utils.initializeAddress;
 
 /**
@@ -39,6 +40,9 @@ public class DatagramChannelStreamer implements Runnable {
             logger.info("start listening on: " + iAddr);
 
             ByteBuffer buf = ByteBuffer.allocateDirect(188_000);
+
+            //readableRTPChannel(iAddr);
+            //Thread.sleep(20000);
 
             SeekableByteChannel source = readableFileChannel(iAddr);
             //UDPInputStream source = new UDPInputStream(iAddr);
