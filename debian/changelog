@@ -1,3 +1,9 @@
+dtmfdetector (0.3) unstable; urgency=medium
+
+  * code fixes
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Wed, 15 Mar 2017 21:25:48 +0300
+
 dtmfdetector (0.2) unstable; urgency=medium
 
   * identify marker position.
