@@ -50,15 +50,16 @@ public class PipedChannelWrapper implements SeekableByteChannel {
         byte[] arr = new byte[dst.remaining()];
         int size;
         if (readFomBuf) {
-            if (buf.remaining()>=0) {
-                if (buf.remaining() <= dst.remaining()) {
-                    buf.get(arr, 0, buf.remaining());
-                    in.read(arr, buf.remaining(), dst.remaining() - buf.remaining());
+            if (buf.hasRemaining()) {
+                if (buf.remaining() < dst.remaining()) {
+                    int pos = buf.remaining();
+                    buf.get(arr, 0, pos);
+                    in.read(arr, pos, dst.remaining() - pos);
                 }
                 else {
-                    buf.get(arr, 0, dst.remaining());
+                    buf.get(arr);
                 }
-                size = dst.remaining();
+                size = arr.length;
             } else {
                 size = in.read(arr);
             }

@@ -128,7 +128,7 @@
 		<dependency>
 			<groupId>javazoom</groupId>
 			<artifactId>jlayer</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.1.4</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi -->

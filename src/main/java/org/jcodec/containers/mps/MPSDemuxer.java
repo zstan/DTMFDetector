@@ -69,7 +69,7 @@ public class MPSDemuxer extends SegmentReader implements MPEGDemuxer {
                 return bufPool.remove(0);
             }
         }
-        return ByteBuffer.allocate(BUFFER_SIZE);
+        return ByteBuffer.allocateDirect(BUFFER_SIZE);
     }
 
     public void putBack(ByteBuffer buffer) {
@@ -196,13 +196,19 @@ public class MPSDemuxer extends SegmentReader implements MPEGDemuxer {
 
         @Override
         public Packet nextFrame(ByteBuffer buf) throws IOException {
+            //System.err.println(0);
             PESPacket pkt;
             if (_pending.size() > 0) {
                 pkt = _pending.remove(0);
             } else {
-                while ((pkt = demuxer.nextPacket(demuxer.getBuffer())) != null && pkt.streamId != streamId)
-                	demuxer.addToStream(pkt);
+                //System.err.println(11);
+                while ((pkt = demuxer.nextPacket(demuxer.getBuffer())) != null && pkt.streamId != streamId) {
+                    //System.err.println(1);
+                    demuxer.addToStream(pkt);
+                    //System.err.println(2);
+                }
             }
+            //System.err.println(3);
             return pkt == null ? null : Packet.createPacket(pkt.data, pkt.pts, 90000, 0, frameNo++, true, null);
         }
 

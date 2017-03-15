@@ -44,7 +44,8 @@ public class MP3Decoder
 		//this.setIn(new MP3AudioFileReader( ).getAudioInputStream( in ));
 		this.setIn(new MP3AudioFileReader( ).getAudioInputStream( stream ));
 		AudioFormat baseFormat = this.getIn().getFormat();
-		System.out.println("sample rate: " + baseFormat.getSampleRate());
+        System.out.println("sample format: " + this.getIn().getFormat());
+        System.out.println("sample rate: " + baseFormat.getSampleRate());
 		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											baseFormat.getSampleRate(), 16,
 											baseFormat.getChannels(),
@@ -111,7 +112,20 @@ public class MP3Decoder
 		int read = 0;
 		int readBytes = 0;
 		try {
+			while (pipedStream.available() < 2*(bytes.length - read) /*&& getIn().available() < (bytes.length - read)*/) {
+			    //System.err.println("getIn().available() < : " + getIn().available() + " need: " + (bytes.length - read) + " pipedStream " + pipedStream.available());
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+			//System.err.println("readSamples: " + (bytes.length - read));
+			//try {
 				readBytes = getIn().read(bytes, read, bytes.length - read);
+			//} catch (ArrayIndexOutOfBoundsException e) {
+
+			//}
 		} catch (IOException e) {
 			return 0;
 		}

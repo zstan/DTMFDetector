@@ -47,7 +47,8 @@ public class DatagramChannelWrapper implements SeekableByteChannel {
     @Override
     public int read(ByteBuffer dst) throws IOException {
         dst.clear();
-        ch.receive(dst);
+        //while (dst.hasRemaining())
+            ch.receive(dst);
         int pos = dst.position();
         position += pos;
 

@@ -112,7 +112,9 @@ public class Demuxer implements Runnable {
             try {
                 while (true) {
                     buf.clear();
+                    //logger.debug("demuxerTrack.nextFrame in");
                     Packet inFrame = demuxerTrack.nextFrame(buf);
+                    //logger.debug("demuxerTrack.nextFrame out");
                     if (inFrame != null) {
                         ByteBuffer data = inFrame.getData();
                         fcount++;
