@@ -1,3 +1,9 @@
+dtmfdetector (0.3.1) unstable; urgency=medium
+
+  * PESPacket nextPacket fix
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Sat, 18 Mar 2017 13:58:00 +0300
+
 dtmfdetector (0.3) unstable; urgency=medium
 
   * code fixes

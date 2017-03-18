@@ -253,7 +253,9 @@ public class MPSDemuxer extends SegmentReader implements MPEGDemuxer {
         ByteBuffer fork = dup.duplicate();
         readToNextMarker(dup);
         PESPacket pkt = readPESHeader(fork, curPos());
-        if (pkt.length == 0) {
+        if (pkt.length == 0 || pkt.length - dup.position() + 6 < 0) {
+            if (pkt.length - dup.position() + 6 < 0)
+                System.err.println("FIX");
             while (!psMarker(curMarker) && readToNextMarker(dup))
                 ;
         } else {
