@@ -121,15 +121,25 @@
 		<dependency>
 			<groupId>com.googlecode.soundlibs</groupId>
 			<artifactId>tritonus-share</artifactId>
-			<version>0.3.7-1</version>
+			<version>0.3.7.4</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/javazoom/jlayer -->
+<!--
 		<dependency>
 			<groupId>javazoom</groupId>
 			<artifactId>jlayer</artifactId>
 			<version>1.0.1.4</version>
 		</dependency>
+
+
+<dependency>
+<groupId>com.badlogicgames.jlayer</groupId>
+<artifactId>jlayer</artifactId>
+<version>1.0.3-gdx-SNAPSHOT</version>
+</dependency>
+
+-->
 
 		<!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi -->
 		<dependency>

@@ -1,9 +1,7 @@
 package com.tino1b2be.audio;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
 import java.io.PushbackInputStream;
 import java.util.HashMap;
 
