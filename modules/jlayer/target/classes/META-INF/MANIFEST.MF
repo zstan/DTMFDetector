@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1490291108482
+Build-Jdk: 1.8.0_92
+Built-By: zhenya
+Bundle-Description: Maven artifact for JLayer library. http://www.javazo
+ om.net/javalayer/sources.html
+Bundle-License: http://www.opensource.org/licenses/lgpl-2.1.php
+Bundle-ManifestVersion: 2
+Bundle-Name: JLayer
+Bundle-SymbolicName: com.googlecode.soundlibs.jlayer
+Bundle-Version: 1.0.1.4
+Created-By: Apache Maven Bundle Plugin
+Export-Package: javazoom.jl.converter;uses:="javazoom.jl.decoder";versio
+ n="1.0.1",javazoom.jl.decoder;version="1.0.1",javazoom.jl.player.advanc
+ ed;uses:="javazoom.jl.decoder,javazoom.jl.player";version="1.0.1",javaz
+ oom.jl.player;uses:="javax.sound.sampled,javazoom.jl.decoder";version="
+ 1.0.1"
+Import-Package: javax.sound.sampled,javazoom.jl.decoder,javazoom.jl.play
+ er
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.5))"
+Tool: Bnd-3.0.0.201509101326
