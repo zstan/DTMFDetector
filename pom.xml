@@ -5,7 +5,7 @@
 	<artifactId>jcodec</artifactId>
 	<name>JCodec</name>
 	<url>http://jcodec.org</url>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	<version>0.2.0</version>
 	<description>Pure Java implementation of video/audio codecs and formats</description>
 	<licenses>

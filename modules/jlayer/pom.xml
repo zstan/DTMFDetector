@@ -12,7 +12,7 @@
     <!-- <version>1.0.1-SNAPSHOT</version> -->
     <version>1.0.1.4</version>
 <groupId>com.googlecode.soundlibs</groupId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <name>JLayer</name>
     <description>Maven artifact for JLayer library. http://www.javazoom.net/javalayer/sources.html</description>
     <developers>

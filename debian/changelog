@@ -1,3 +1,9 @@
+dtmfdetector (0.3.2) unstable; urgency=medium
+
+  * jlayer dirty patch
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Thu, 23 Mar 2017 21:39:02 +0300
+
 dtmfdetector (0.3.1) unstable; urgency=medium
 
   * PESPacket nextPacket fix
