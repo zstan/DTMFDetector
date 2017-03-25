@@ -360,9 +360,9 @@ public class NIOUtils {
         return new DatagramChannelWrapper(ch);
     }
 
-    /*public static RTPChannelWrapper readableRTPChannel(InetSocketAddress ch) throws IOException, InvalidSessionAddressException {
+    public static RTPChannelWrapper readableRTPChannel(InetSocketAddress ch) throws IOException, InvalidSessionAddressException {
         return new RTPChannelWrapper(ch);
-    }*/
+    }
 
     public static PipedChannelWrapper readableFileChannel(InputStream ch) throws FileNotFoundException {
         return new PipedChannelWrapper(ch);

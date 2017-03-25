@@ -1012,7 +1012,7 @@ class LayerIIDecoder extends LayerIDecoder implements FrameDecoder
 	  		// memcpy (channel2_samples, channel2_groupingtable + samplecode, 3 * sizeof (real));
 	  	*/
 			 if (groupingtable[1].length < samplecode+2) { //TODO: dirty stub
-				 System.err.println("FIX2: " + groupingtable[1].length + " " +samplecode );
+				 System.err.println("LayerII FIX: " + groupingtable[1].length + " " +samplecode );
 				 channel2_samples[0] = (float) ((stream.get_bits(channel2_codelength[0])) *
 						 channel2_factor[0] - 1.0);
 				 channel2_samples[1] = (float) ((stream.get_bits(channel2_codelength[0])) *

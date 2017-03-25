@@ -1569,7 +1569,7 @@ public class DTMFUtil {
     private boolean onLabelReact(String[] seq2) {
         if (!seq2[1].isEmpty() || !seq2[0].isEmpty()) {
             ++framesCount;
-            if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 2) {
+            if ((framesCount * getMillisecondsPerFrame())/2 > getLabelPauseDurr()) {
                 String label;
                 if (seq2[0].isEmpty()) {
                     label = seq2[1];

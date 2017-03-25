@@ -38,7 +38,7 @@ public class Demuxer implements Runnable {
     private boolean identMarkerPosition(SeekableByteChannel channel) throws IOException {
         int markerSize = 188;
         int probeSize = 1;
-        ByteBuffer buffer = ByteBuffer.allocateDirect(probeSize);
+        ByteBuffer buffer = ByteBuffer.allocate(probeSize);
         if (NIOUtils.readFromChannel(channel, buffer) != probeSize)
             return false;
         buffer.flip();
