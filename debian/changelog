@@ -1,3 +1,9 @@
+dtmfdetector (0.3.3) unstable; urgency=medium
+
+  * dtmf label pause changes
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Sat, 25 Mar 2017 15:54:29 +0300
+
 dtmfdetector (0.3.2) unstable; urgency=medium
 
   * jlayer dirty patch

@@ -5,7 +5,7 @@
 	<artifactId>jcodec</artifactId>
 	<name>JCodec</name>
 	<url>http://jcodec.org</url>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<version>0.2.0</version>
 	<description>Pure Java implementation of video/audio codecs and formats</description>
 	<licenses>
@@ -132,13 +132,6 @@
 			<version>1.0.1.4</version>
 		</dependency>
 
-
-<dependency>
-<groupId>com.badlogicgames.jlayer</groupId>
-<artifactId>jlayer</artifactId>
-<version>1.0.3-gdx-SNAPSHOT</version>
-</dependency>
-
 -->
 
 		<!-- https://mvnrepository.com/artifact/com.googlecode.soundlibs/mp3spi -->
@@ -205,11 +198,11 @@
 			<version>2.2.3-1</version>
 		</dependency>
 	</dependencies>
-
+<!--
     <modules>
         <module>modules/jlayer</module>
     </modules>
-
+-->
 	<profiles>
 		<profile>
 			<id>uber-jar</id>
