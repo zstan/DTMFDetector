@@ -1087,8 +1087,6 @@ public class DTMFUtil {
 			double[] sliced = Arrays.copyOfRange(buffer, 0, buffer.length - slice);
 
 			frame = DecoderUtil.concatenateAll(tempBuffer21, tempBuffer11, sliced);
-			tempBuffer21 = tempBuffer11;
-			tempBuffer11 = buffer;
 		}
 
 		char out;
@@ -1163,12 +1161,6 @@ public class DTMFUtil {
 
 			frame1 = DecoderUtil.concatenateAll(tempBuffer21, tempBuffer11, sliced1);
 			frame2 = DecoderUtil.concatenateAll(tempBuffer22, tempBuffer12, sliced2);
-
-			tempBuffer21 = tempBuffer11;
-			tempBuffer11 = buffer[0];
-
-			tempBuffer22 = tempBuffer12;
-			tempBuffer12 = buffer[1];
 		}
 
 		char[] outArr = { 'T', 'T' };
@@ -1569,14 +1561,12 @@ public class DTMFUtil {
     private boolean onLabelReact(String[] seq2) {
         if (!seq2[1].isEmpty() || !seq2[0].isEmpty()) {
             ++framesCount;
-            if ((framesCount * getMillisecondsPerFrame())/2 > getLabelPauseDurr()) {
+            if ((framesCount * getMillisecondsPerFrame()) > getLabelPauseDurr() * 4) {
                 String label;
                 if (seq2[0].isEmpty()) {
                     label = seq2[1];
-                    //seq2[1] = "";
                 } else {
                     label = seq2[0];
-                    //seq2[0] = "";
                 }
                 framesCount = 0;
                 labelReact(label);
@@ -1589,7 +1579,7 @@ public class DTMFUtil {
     private boolean onLabelReact(String seq2) {
         if (!seq2.isEmpty()) {
             ++framesCount;
-            if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 2) {
+            if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 4) {
                 framesCount = 0;
                 labelReact(seq2);
                 return true;

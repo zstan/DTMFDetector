@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -376,11 +377,12 @@ public class NIOUtils {
         return new AutoFileChannelWrapper(file);
     }
 
-    public static ByteBuffer duplicate(ByteBuffer bb) {
-        ByteBuffer out = ByteBuffer.allocate(bb.remaining());
+    public static Buffer duplicate(ByteBuffer bb) {
+        /*ByteBuffer out = ByteBuffer.allocate(bb.remaining());
         out.put(bb.duplicate());
         out.flip();
-        return out;
+        return out;*/
+        return bb.duplicate().flip();
     }
 
     public static int find(List<ByteBuffer> catalog, ByteBuffer key) {
