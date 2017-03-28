@@ -40,7 +40,7 @@ public class DatagramChannelStreamer implements Runnable {
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
-            ByteBuffer buf = ByteBuffer.allocateDirect(188_000);
+            ByteBuffer buf = ByteBuffer.allocate(188_000);
 
             //readableRTPChannel(iAddr);
             //Thread.sleep(20000);

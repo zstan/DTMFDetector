@@ -18,7 +18,8 @@ PROG_ARGS="-Dlog4j.configurationFile=$WORKING_DIR/log4j2.xml -jar "
 PID_PATH="/var/run"
 PID_NAME="dtmfdetector.pid"
 LOG_FILE="/var/log/dtmfdetector/dtmfdetector.log"
-JVM_OPTIONS="-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseTLAB"
+#JVM_OPTIONS="-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseTLAB"
+JVM_OPTIONS="-XX:+UseTLAB"
 
 . /lib/lsb/init-functions
 
