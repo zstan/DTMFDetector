@@ -34,6 +34,8 @@ public class PipedChannelWrapper implements SeekableByteChannel {
     public SeekableByteChannel setPosition(long newPosition) throws IOException {
         logger.warn("PipedChannelWrapper, not supported: newPosition " + newPosition + " size: " + pos);
         readFomBuf = true;
+
+        buf.flip();
         buf.position((int)newPosition);
         return this;
     }
