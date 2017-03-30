@@ -75,7 +75,7 @@ public class ChannelManager {
             logger.error("channel {} has no external channel in elemental config", this.getChannel().getId());
         }
         else {
-            logger.debug("label event: " + label);
+            logger.info("label event: " + label);
 
             Pair<Integer, String> stopLbl = adBlocks.get(label);
             if (stopLbl != null) {

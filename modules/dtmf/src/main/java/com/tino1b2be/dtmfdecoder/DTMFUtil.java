@@ -121,7 +121,7 @@ public class DTMFUtil {
 	 * WikiPedia article on DTMF</a>.
 	 */
 	public static final char[] DTMF_CHARACTERS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-			'A', 'B', 'C', 'D' };
+			'A', 'B', 'C', 'D', '*', '#' };
 
 	// generation variables
 	private double[] generatedSeq;
@@ -1165,16 +1165,19 @@ public class DTMFUtil {
 
 		char[] outArr = { 'T', 'T' };
 		// check if the power of the signal is high enough to be accepted.
-		if (DecoderUtil.signalPower(frame1) < CUT_OFF_POWER) {
+		if (DecoderUtil.noiseSignalCut(frame1, CUT_OFF_POWER)) {
 			outArr[0] = '_';
 		}
-		if (DecoderUtil.signalPower(frame2) < CUT_OFF_POWER) {
+
+		if (DecoderUtil.noiseSignalCut(frame2, CUT_OFF_POWER)) {
 			outArr[1] = '_';
 		}
 
 		if (outArr[0] == '_' && outArr[1] == '_') {
+			logger.debug("cut off noise signal");
 			return outArr;
 		}
+
 		if (goertzel) {
 
 			// transform frame
@@ -1213,14 +1216,14 @@ public class DTMFUtil {
 
 			// transform channel 1
 			if (outArr[0] != '_') {
-				power_spectrum1 = DTMFUtil.transformFrameFFT(frame1, (int) audio.getSampleRate());
+				power_spectrum1 = DTMFUtil.transformFrameFFT(frame1, audio.getSampleRate());
 			} else {
 				power_spectrum1 = null;
 			}
 
 			// transform channel 2
 			if (outArr[1] != '_') {
-				power_spectrum2 = DTMFUtil.transformFrameFFT(frame2, (int) audio.getSampleRate());
+				power_spectrum2 = DTMFUtil.transformFrameFFT(frame2, audio.getSampleRate());
 			} else {
 				power_spectrum2 = null;
 			}

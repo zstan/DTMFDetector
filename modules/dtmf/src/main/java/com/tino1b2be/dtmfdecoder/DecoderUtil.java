@@ -23,6 +23,9 @@
 
 package com.tino1b2be.dtmfdecoder;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
@@ -34,6 +37,8 @@ import java.util.Arrays;
  *
  */
 public class DecoderUtil {
+
+	private static final Logger logger = LogManager.getLogger(DecoderUtil.class);
 
 	/**
 	 * Method to concatenate 2 arrays of a generic type
@@ -105,6 +110,27 @@ public class DecoderUtil {
 			power += Math.abs(frame[i]);
 		}
 		return power / frame.length;
+	}
+
+	/**
+	 * Optimize cut off signal detection
+	 *
+	 * @param frame
+	 *            Array of sample points to be tested
+	 * @param threshold
+	 *            noise threshold
+	 * @return average amplitude of the frame
+	 */
+	public static boolean noiseSignalCut(double[] frame, double threshold) {
+		double power = 0;
+
+		for (int i = frame.length - 1; i >= 0; i--) {
+			power += Math.abs(frame[i]);
+			if (i == frame.length/2 && power/frame.length > threshold) {
+				return false;
+			}
+		}
+		return power/frame.length < threshold;
 	}
 
 	/**
