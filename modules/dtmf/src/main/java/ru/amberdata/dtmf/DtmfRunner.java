@@ -10,9 +10,9 @@ import ru.amberdata.dtmf.configuration.dtmf.DTMFDetectorConfig;
 /**
  * Created by zhenya on 2016-12-15.
  */
-public class Main {
+public class DtmfRunner {
 
-    private static final Logger logger = LogManager.getLogger(Main.class);
+    private static final Logger logger = LogManager.getLogger(DtmfRunner.class);
 
     public static void main(String[] args) throws Exception {
 

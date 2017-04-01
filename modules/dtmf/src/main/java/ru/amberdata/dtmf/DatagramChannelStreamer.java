@@ -32,7 +32,7 @@ public class DatagramChannelStreamer implements Runnable {
 
     private void init() throws Exception {
         InputStream instream =
-                Main.class.getClassLoader().getResourceAsStream("log4j2.xml");
+                DatagramChannelStreamer.class.getClassLoader().getResourceAsStream("log4j2.xml");
 
         logger.info( "The server is ready..." );
 

@@ -60,7 +60,9 @@ public class DTMFUtil {
 	 */
 
 	public static boolean debug = false;
-	long samplesReadSum = 0;
+	private long samplesReadSum = 0;
+
+	double[][] framesBuffer;
 	/**
 	 * True if decoder is to use the goertzel algorithm instead of the FFT False
 	 * by default
@@ -87,7 +89,7 @@ public class DTMFUtil {
 	private int labelPauseDurr;
 	private int symbolLength;
 	private Consumer<String> onLabelAction;
-    long framesCount = 0;
+    private long framesCount = 0;
 
 	private static int[] freqIndicies;
 
@@ -97,7 +99,7 @@ public class DTMFUtil {
 	 * "http://en.wikipedia.org/wiki/Dual-tone_multi-frequency_signaling" >
 	 * WikiPedia article on DTMF</a>.
 	 */
-	public static final int[] DTMF_FREQUENCIES_BIN = { 
+	public static final int[] DTMF_FREQUENCIES_BIN = {
 			687, 697, 707, // 697
 			758, 770, 782, // 770
 			839, 852, 865, // 852
@@ -125,8 +127,7 @@ public class DTMFUtil {
 
 	// generation variables
 	private double[] generatedSeq;
-	private int outPauseDurr;
-	private int outToneDurr;
+	private int outPauseDurr, outToneDurr;
 	private double outFs;
 	private File outFile;
 	private char[] outChars;
@@ -145,11 +146,8 @@ public class DTMFUtil {
 	public DTMFUtil(double[] samples, int Fs) throws AudioFileException, DTMFDecoderException {
 		// create an audio file object and export to a temp location
 		// load the temp audio file and decode
-		this.decoder = true;
 		audio = new TempAudio(samples, Fs);
-		setFrameSize();
-		setCentreIndicies();
-		this.decoded = false;
+		this.init();
 	}
 
 	/**
@@ -165,11 +163,8 @@ public class DTMFUtil {
 	public DTMFUtil(double[][] samples, int Fs) throws AudioFileException, DTMFDecoderException {
 		// create an audio file object and export to a temp location
 		// load the temp audio file and decode
-		this.decoder = true;
 		audio = new TempAudio(samples, Fs);
-		setFrameSize();
-		setCentreIndicies();
-		this.decoded = false;
+		this.init();
 	}
 
 	/**
@@ -180,12 +175,8 @@ public class DTMFUtil {
 	 * @throws DTMFDecoderException
 	 */
 	public DTMFUtil(AudioFile data) throws DTMFDecoderException {
-		this.decoder = true;
 		this.audio = data;
-		setFrameSize();
-		if (!goertzel)
-			setCentreIndicies();
-		this.decoded = false;
+		this.init();
 	}
 
 	/**
@@ -201,21 +192,13 @@ public class DTMFUtil {
 	 * @throws DTMFDecoderException
 	 */
 	public DTMFUtil(String filename) throws AudioFileException, IOException, DTMFDecoderException {
-		this.decoder = true;
 		this.audio = FileUtil.readAudioFile(filename);
-		setFrameSize();
-		if (!goertzel)
-			setCentreIndicies();
-		this.decoded = false;
+		this.init();
 	}
 
 	public DTMFUtil(InputStream stream) throws IOException, UnsupportedAudioFileException, DTMFDecoderException {
-		this.decoder = true;
 		this.audio = FileUtil.readMp3File(stream);
-		setFrameSize();
-		if (!goertzel)
-			setCentreIndicies();
-		this.decoded = false;
+		this.init();
 	}
 
 	/**
@@ -230,9 +213,13 @@ public class DTMFUtil {
 	 * @throws WavFileException
 	 * @throws DTMFDecoderException
 	 */
-	public DTMFUtil(File file) throws AudioFileException, IOException, DTMFDecoderException {
-		this.decoder = true;
+	public DTMFUtil(File file) throws AudioFileException, DTMFDecoderException, IOException {
 		this.audio = FileUtil.readAudioFile(file);
+		this.init();
+	}
+
+	private void init() throws DTMFDecoderException {
+		this.decoder = true;
 		setFrameSize();
 		if (!goertzel)
 			setCentreIndicies();
@@ -289,7 +276,7 @@ public class DTMFUtil {
 	private void setCentreIndicies() {
 		freqIndicies = new int[DTMF_FREQUENCIES_BIN.length];
 		for (int i = 0; i < freqIndicies.length; i++) {
-			int ind = (int) Math.round(((DTMF_FREQUENCIES_BIN[i] * 1.0) / (audio.getSampleRate()) * 1.0) * frameSize);
+			int ind = (int) Math.round(((DTMF_FREQUENCIES_BIN[i] * 1.0) / audio.getSampleRate()) * frameSize);
 			freqIndicies[i] = ind;
 		}
 	}
@@ -316,7 +303,7 @@ public class DTMFUtil {
 				else {
 					frameSize = size;
 					this.frameBufferSize = (int) Math.ceil(frameSize / 3.0);
-					System.out.println("frameSize: " + frameSize);
+					logger.info("frameSize: " + frameSize);
 					return;
 				}
 			}
@@ -431,9 +418,9 @@ public class DTMFUtil {
 		final FastFourierTransformer fft = new FastFourierTransformer(DftNormalization.STANDARD);
 		final Complex[] spectrum = fft.transform(frame, TransformType.FORWARD);
 		final double[] powerSpectrum = new double[frame.length / 2 + 1];
-		for (int ii = 0; ii < powerSpectrum.length; ii++) {
-			final double abs = spectrum[ii].abs();
-			powerSpectrum[ii] = abs * abs;
+		for (int i = 0; i < powerSpectrum.length; i++) {
+			double abs = spectrum[i].abs();
+			powerSpectrum[i] = abs * abs;
 		}
 		return powerSpectrum;
 	}
@@ -1130,14 +1117,20 @@ public class DTMFUtil {
 	 * @throws DTMFDecoderException
 	 */
 	private char[] decodeNextFrameStereo() throws IOException, AudioFileException, DTMFDecoderException {
-		double[][] buffer = new double[2][frameBufferSize];
+		if (framesBuffer == null)
+			framesBuffer = new double[2][frameBufferSize];
+		else {
+			Arrays.fill(framesBuffer[0], 0.0);
+			Arrays.fill(framesBuffer[1], 0.0);
+		}
+
 		double[] tempBuffer11 = new double[frameBufferSize];
 		double[] tempBuffer21 = new double[frameBufferSize];
 		double[] tempBuffer12 = new double[frameBufferSize];
 		double[] tempBuffer22 = new double[frameBufferSize];
 
 		int samplesRead;
-		samplesRead = audio.read(buffer);
+		samplesRead = audio.read(framesBuffer);
 
 		samplesReadSum += 1;
 		if (samplesRead < frameBufferSize) {
@@ -1146,18 +1139,18 @@ public class DTMFUtil {
 		}
 		double[] frame1, frame2;
 		if (goertzel) {
-			frame1 = DecoderUtil.concatenateAll(tempBuffer21, tempBuffer11, buffer[0]);
-			frame2 = DecoderUtil.concatenateAll(tempBuffer22, tempBuffer12, buffer[1]);
+			frame1 = DecoderUtil.concatenateAll(tempBuffer21, tempBuffer11, framesBuffer[0]);
+			frame2 = DecoderUtil.concatenateAll(tempBuffer22, tempBuffer12, framesBuffer[1]);
 			tempBuffer21 = tempBuffer11;
-			tempBuffer11 = buffer[0];
+			tempBuffer11 = framesBuffer[0];
 
 			tempBuffer22 = tempBuffer12;
-			tempBuffer12 = buffer[1];
+			tempBuffer12 = framesBuffer[1];
 		} else {
-			int slice = buffer.length + tempBuffer11.length + tempBuffer21.length - frameSize;
+			int slice = framesBuffer.length + tempBuffer11.length + tempBuffer21.length - frameSize;
 
-			double[] sliced1 = Arrays.copyOfRange(buffer[0], 0, buffer.length - slice);
-			double[] sliced2 = Arrays.copyOfRange(buffer[1], 0, buffer.length - slice);
+			double[] sliced1 = Arrays.copyOfRange(framesBuffer[0], 0, framesBuffer.length - slice);
+			double[] sliced2 = Arrays.copyOfRange(framesBuffer[1], 0, framesBuffer.length - slice);
 
 			frame1 = DecoderUtil.concatenateAll(tempBuffer21, tempBuffer11, sliced1);
 			frame2 = DecoderUtil.concatenateAll(tempBuffer22, tempBuffer12, sliced2);
@@ -1246,10 +1239,12 @@ public class DTMFUtil {
 			// check if the frame 1 has too much noise
 			if (isNoisy(dft_data1, power_spectrum1)) {
 				outArr[0] = '_';
+				logger.debug("noisy signal detected, skip");
 			}
 
 			if (isNoisy(dft_data2, power_spectrum2)) {
 				outArr[1] = '_';
+				logger.debug("noisy signal detected, skip");
 			}
 
 			if (outArr[0] == '_' && outArr[1] == '_') {
@@ -1266,7 +1261,7 @@ public class DTMFUtil {
                     System.out.println("framesRead: " + samplesReadSum + " outArr[1] " + outArr[1]);
 				}
 			} catch (DTMFDecoderException e) {
-				e.printStackTrace();
+				logger.error(e);
 				throw new DTMFDecoderException("Something went wrong.");
 			}
 			return outArr;
