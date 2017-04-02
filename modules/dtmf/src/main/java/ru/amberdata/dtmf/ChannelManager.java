@@ -58,7 +58,7 @@ public class ChannelManager {
 
     public void initDtmf(DTMFUtil dtmf) throws DTMFDecoderException {
         dtmf.setMinToneDuration(ch.getSymbolLength());
-        if (Double.compare(ch.getCutoffNoiseRatio(), -1.) == 0) {
+        if (Double.compare(ch.getCutoffNoiseRatio(), -1.) != 0) {
             dtmf.setFftCutoffPowerNoiseRatio(ch.getCutoffNoiseRatio());
         }
         dtmf.setLabelPauseDurr(ch.getPauseLength());

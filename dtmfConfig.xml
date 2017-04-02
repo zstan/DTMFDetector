@@ -5,7 +5,7 @@
         <audioPID>69</audioPID>
         <audioFormat>MPEG</audioFormat>
         <dtmfChannel>auto</dtmfChannel>
-        <cutoffNoiseRatio>0.50</cutoffNoiseRatio>
+        <cutoffNoiseRatio>0.40</cutoffNoiseRatio>
         <symbolLength>70</symbolLength>
         <pauseLength>70</pauseLength>
         <adBreak id="2">

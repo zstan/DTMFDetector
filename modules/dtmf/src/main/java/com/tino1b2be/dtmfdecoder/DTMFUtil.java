@@ -70,7 +70,7 @@ public class DTMFUtil {
 	public static boolean goertzel = false;
 
 	private static final double CUT_OFF_POWER = 0.004;
-	private double FftCutoffPowerNoiseRatio = 0.50;//0.46;
+	private double FftCutoffPowerNoiseRatio = 0.40;//0.46;
 	private static final double FFT_FRAME_DURATION = 0.030;
 	private static final double GOERTZEL_CUT_OFF_POWER_NOISE_RATIO = 0.87;
 	private static final double GOERTZEL_FRAME_DURATION = 0.045;
@@ -1167,7 +1167,7 @@ public class DTMFUtil {
 		}
 
 		if (outArr[0] == '_' && outArr[1] == '_') {
-			logger.debug("cut off noise signal");
+			logger.trace("cut off noise signal");
 			return outArr;
 		}
 
@@ -1239,12 +1239,12 @@ public class DTMFUtil {
 			// check if the frame 1 has too much noise
 			if (isNoisy(dft_data1, power_spectrum1)) {
 				outArr[0] = '_';
-				logger.debug("noisy signal detected, skip");
+				logger.trace("noisy signal detected, skip " + FftCutoffPowerNoiseRatio);
 			}
 
 			if (isNoisy(dft_data2, power_spectrum2)) {
 				outArr[1] = '_';
-				logger.debug("noisy signal detected, skip");
+				logger.trace("noisy signal detected, skip");
 			}
 
 			if (outArr[0] == '_' && outArr[1] == '_') {
