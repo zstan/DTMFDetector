@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.io.UDPInputStream;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
+import ru.amberdata.dtmf.io.RTPChannelWrapperNew;
 
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -42,27 +43,31 @@ public class DatagramChannelStreamer implements Runnable {
 
             ByteBuffer buf = ByteBuffer.allocate(188_000);
 
-            //readableRTPChannel(iAddr);
-            //Thread.sleep(20000);
-
             SeekableByteChannel source = readableFileChannel(iAddr);
+            //RTPChannelWrapperNew source = new RTPChannelWrapperNew();
+
+
+
             //UDPInputStream source = new UDPInputStream(iAddr);
 
             PipedOutputStream pipedOutput = new PipedOutputStream();
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, buf.limit() * 100);
-            WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
+            //WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
             ChannelManager chManager = new ChannelManager(ch, this.context);
-            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), chManager));
+            Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), chManager), "Demuxer");
             demuxerThread.start();
 
             while (source.read(buf) != -1) {
                 buf.flip();
-                pipedChannel.write(buf);
+                byte[] bb = new byte[buf.limit()];
+                System.arraycopy(buf.array(), 0, bb, 0, bb.length);
+                pipedOutput.write(bb);
+                //pipedChannel.write(buf);
             }
             demuxerThread.interrupt();
             pipedOutput.close();
-            pipedChannel.close();
+            //pipedChannel.close();
         }
     }
 

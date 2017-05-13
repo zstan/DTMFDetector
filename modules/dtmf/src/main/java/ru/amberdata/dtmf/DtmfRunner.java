@@ -10,9 +10,9 @@ import ru.amberdata.dtmf.configuration.dtmf.DTMFDetectorConfig;
 /**
  * Created by zhenya on 2016-12-15.
  */
-public class DtmfRunner {
+public class DTMFRunner {
 
-    private static final Logger logger = LogManager.getLogger(DtmfRunner.class);
+    private static final Logger logger = LogManager.getLogger(DTMFRunner.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -22,7 +22,7 @@ public class DtmfRunner {
         DTMFDetectorConfig dtmfConf = ctx.getDtmfConfig();
         logger.info("found {} channels", dtmfConf.getChannel().size());
         for (Channel ch : dtmfConf.getChannel()) {
-            Thread t = new Thread(new DatagramChannelStreamer(ctx));
+            Thread t = new Thread(new DatagramChannelStreamer(ctx), "DTMFRunner");
             t.start();
             t.join();
         }
