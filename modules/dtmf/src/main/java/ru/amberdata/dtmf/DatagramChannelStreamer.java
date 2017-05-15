@@ -40,7 +40,7 @@ public class DatagramChannelStreamer implements Runnable {
             ByteBuffer buf;
 
             //if (ch.getProtocol() == Channel.DTMFProtocol.UDP)
-                buf = ByteBuffer.allocate(188_0);
+                buf = ByteBuffer.allocate(188_000);
             //else
             //    buf = ByteBuffer.allocate(200_0);
 
