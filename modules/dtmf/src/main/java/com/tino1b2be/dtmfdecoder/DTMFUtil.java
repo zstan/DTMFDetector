@@ -996,12 +996,13 @@ public class DTMFUtil {
 		char[] prev3 = { '_', '_' };
 		char[] prev4 = { '_', '_' };
 		char[] prev5 = { '_', '_' };
-		String[] seq2 = { "", "" };
+		String[] dtmfLabels = {"", ""};
+		boolean changed = false;
 		do {
 
 			try {
-                if (onLabelReact(seq2)) {
-                    seq2 = new String[]{"", ""};
+                if (onLabelReact(dtmfLabels)) {
+                    dtmfLabels = new String[]{"", ""};
                 }
 				curr = decodeNextFrameStereo();
 			} catch (DTMFDecoderException e) {
@@ -1014,7 +1015,7 @@ public class DTMFUtil {
 																												// false
 																												// positives
 					if (curr[0] != prev5[0]) {
-						seq2[0] += curr[0];
+						dtmfLabels[0] += curr[0];
 					}
 				}
 			}
@@ -1030,7 +1031,7 @@ public class DTMFUtil {
 																												// false
 																												// positives
 					if (curr[1] != prev5[1]) {
-						seq2[1] += curr[1];
+						dtmfLabels[1] += curr[1];
 					}
 				}
 			}
@@ -1041,7 +1042,7 @@ public class DTMFUtil {
 			prev[1] = curr[1];
 
 		} while (true);
-		seq = seq2;
+		seq = dtmfLabels;
 	}
 
 	/**
@@ -1558,8 +1559,15 @@ public class DTMFUtil {
 
     private boolean onLabelReact(String[] seq2) {
         if (!seq2[1].isEmpty() || !seq2[0].isEmpty()) {
+
             ++framesCount;
-            if ((framesCount * getMillisecondsPerFrame()) > getLabelPauseDurr() * 4) {
+            int len = Math.max(seq2[0].length(), seq2[1].length());
+
+			logger.debug("onLabelReact " + len + " " + framesCount + " " + framesCount * getMillisecondsPerFrame());
+
+			int stuff_len = 30; // additional latency label_len(100) + pause_len(50) == 170 sometimes
+
+            if ((framesCount * getMillisecondsPerFrame()) > (getLabelPauseDurr() + getSymbolLength() + stuff_len) * len) {
                 String label;
                 if (seq2[0].isEmpty()) {
                     label = seq2[1];

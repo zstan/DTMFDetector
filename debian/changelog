@@ -1,3 +1,9 @@
+dtmfdetector (0.4.1) unstable; urgency=medium
+
+  * correct label duration config
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Tue, 02 May 2017 20:47:34 +0300
+
 dtmfdetector (0.4.0) unstable; urgency=medium
 
   * clear modules hierarchy
