@@ -3,7 +3,6 @@ package ru.amberdata.dtmf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jcodec.common.io.SeekableByteChannel;
-import org.jcodec.common.io.UDPInputStream;
 import ru.amberdata.dtmf.configuration.dtmf.Channel;
 import ru.amberdata.dtmf.io.RTPChannelWrapperNew;
 
@@ -12,11 +11,8 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
 
 import static org.jcodec.common.io.NIOUtils.readableFileChannel;
-import static org.jcodec.common.io.NIOUtils.readableRTPChannel;
 import static ru.amberdata.dtmf.configuration.Utils.initializeAddress;
 
 /**
@@ -41,12 +37,17 @@ public class DatagramChannelStreamer implements Runnable {
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
-            ByteBuffer buf = ByteBuffer.allocate(188_000);
+            ByteBuffer buf;
 
-            SeekableByteChannel source = readableFileChannel(iAddr);
-            //RTPChannelWrapperNew source = new RTPChannelWrapperNew();
+            //if (ch.getProtocol() == Channel.DTMFProtocol.UDP)
+                buf = ByteBuffer.allocate(188_0);
+            //else
+            //    buf = ByteBuffer.allocate(200_0);
 
+            SeekableByteChannel source = null;
 
+            source = readableFileChannel(iAddr, ch.getProtocol());
+            //source = new RTPChannelWrapperNew();
 
             //UDPInputStream source = new UDPInputStream(iAddr);
 

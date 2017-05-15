@@ -12,8 +12,6 @@
         import amber.net.RTP.Packets.RTPPacket;
         import amber.net.RTP.Packets.RTP_actionListener;
 
-        import java.net.RTP.*;
-
         /**
     *   This class maintains session related information and provides startup functions.
     */

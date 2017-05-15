@@ -69,7 +69,7 @@ public class Demuxer implements Runnable {
         try {
             Channel ch = getChannelManager().getChannel();
             if (programs.contains(ch.getAudioPID())) {
-                logger.info("try to initialize audio pid: " + ch.getAudioPID());
+                logger.info("try to initialize stream pid: " + ch.getAudioPID());
                 demuxer = new MTSDemuxer(source, ch.getAudioPID());
             } else {
                 logger.error("chosen audio pid not found or initialisation fail, pid: " + ch.getAudioPID());
@@ -103,7 +103,7 @@ public class Demuxer implements Runnable {
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, 18_800_000);
             WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
-            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, this.getChannelManager()));
+            Thread dtmfDetectorThread = new Thread(new DTMFDetector(pipedInputStream, this.getChannelManager()), "DTMFDetector");
             dtmfDetectorThread.start();
 
             long fcount = 0;

@@ -7,9 +7,6 @@ import amber.net.RTP.Packets.RTPPacket;
 
 import java.util.*;
 
-import java.net.RTP.*;
-
-
 /**
 *   This class encapsulates the functionality to construct and send out  RTP Packets and also
 *   to receive RTP Packets. It provides a seperate thread to receive and send out RTP 
@@ -249,22 +246,25 @@ public class RTPThreadHandler extends Thread
         Session.outprintln ("RTP Thread started ");
         Session.outprintln ("RTP Group: " + m_InetAddress + "/" + m_mcastPort);
 
-	    byte buf[] = new byte[1024];
-	    DatagramPacket packet = new DatagramPacket( buf, buf.length );
-	    
         PayloadType = Session.getPayloadType();
 
        	try
     	{
+            byte buf[] = new byte[200 * 10];
+            DatagramPacket packet = new DatagramPacket( buf, buf.length );
 
             MulticastSocket s = new MulticastSocket ( m_mcastPort );
             s.joinGroup ( m_InetAddress );
 
     		while (1==1)
     		{
+
     			s.receive( packet );
     			if ( ValidateRTPPacketHeader ( packet.getData() ) )
                 {
+
+                    System.err.println("ValidateRTPPacketHeader true " + packet.getLength());
+
         			long SSRC = 0;
         			int TimeStamp = 0;
         			short SeqNo = 0;
@@ -290,8 +290,10 @@ public class RTPThreadHandler extends Thread
                 	// the payload is after the fixed 12 byte header
                 	byte payload [] = new byte [ packet.getLength() - RTP_PACKET_HEADER_LENGTH ];
 
-                	for ( int i=0; i < payload.length; i++ )
-                	    payload [i] = buf [ i+RTP_PACKET_HEADER_LENGTH ];
+                	for ( int i=0; i < payload.length; i++ ) {
+                        payload[i] = buf[i + RTP_PACKET_HEADER_LENGTH];
+                        //System.err.println("payload: " + payload[0]);
+                    }
 
                 	rtppkt.data = payload;
                 	if (Session.EnableLoopBack)
@@ -329,6 +331,8 @@ public class RTPThreadHandler extends Thread
 		        }
                 else
                 {
+                    System.err.println("ValidateRTPPacketHeader true");
+
                     System.err.println (    "RTP Receiver: Bad RTP Packet received");
                     System.err.println (    "From : " + packet.getAddress() + "/" + packet.getPort() + "\n" +
                                             "Length : " + packet.getLength()
@@ -356,7 +360,7 @@ public class RTPThreadHandler extends Thread
   *    Validates RTP Packet.
   *    Returns true or false corresponding to the test results.
   *
-  *   @param   packet[] The RTP Packet to be validated.
+  *   @param   packet The RTP Packet to be validated.
   *   @return  True if validation was successful, False otherwise.
   */
 
@@ -382,6 +386,10 @@ public class RTPThreadHandler extends Thread
         //  0 1 0 1 1 0 0 0
 
         // Payload Type must be the same as the session's
+
+       //System.err.println("payload: " + (packet [1] & 0x7F));
+
+       byte pp = (byte) (packet[1] & 0x7F);
         if ( ( packet [1] & 0x7F ) == Session.getPayloadType() )
             PayloadTypeValid = true;
         else

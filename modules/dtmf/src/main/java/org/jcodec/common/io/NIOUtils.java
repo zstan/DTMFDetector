@@ -6,6 +6,7 @@ import static org.jcodec.platform.Platform.stringFromBytes;
 import org.jcodec.common.ArrayUtil;
 import org.jcodec.common.AutoFileChannelWrapper;
 import org.jcodec.platform.Platform;
+import ru.amberdata.dtmf.configuration.dtmf.Channel;
 import ru.amberdata.dtmf.io.DatagramChannelWrapper;
 import ru.amberdata.dtmf.io.PipedChannelWrapper;
 
@@ -357,8 +358,8 @@ public class NIOUtils {
         return new FileChannelWrapper(new FileOutputStream(file).getChannel());
     }
 
-    public static DatagramChannelWrapper readableFileChannel(InetSocketAddress ch) throws IOException {
-        return new DatagramChannelWrapper(ch);
+    public static DatagramChannelWrapper readableFileChannel(InetSocketAddress ch, Channel.DTMFProtocol schema) throws IOException {
+        return new DatagramChannelWrapper(ch, schema);
     }
 
     public static RTPChannelWrapper readableRTPChannel(InetSocketAddress ch) throws IOException, InvalidSessionAddressException {

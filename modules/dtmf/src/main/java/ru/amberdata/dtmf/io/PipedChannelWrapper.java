@@ -56,6 +56,9 @@ public class PipedChannelWrapper implements SeekableByteChannel {
     public int read(ByteBuffer dst) throws IOException {
         byte[] arr = new byte[dst.remaining()];
         int size;
+
+        //System.err.println("PipedChannelWrapper available: " + in.available());
+
         if (readFomBuf) {
             if (buf.hasRemaining()) {
                 if (buf.remaining() < dst.remaining()) {
@@ -74,8 +77,9 @@ public class PipedChannelWrapper implements SeekableByteChannel {
         else {
             size = in.read(arr);
         }
+
         dst.put(arr);
-        if (!readFomBuf) {
+        if (!readFomBuf && buf.remaining() > arr.length) {
             buf.put(arr);
         }
         pos += size;

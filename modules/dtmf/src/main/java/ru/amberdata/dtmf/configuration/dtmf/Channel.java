@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class Channel {
         return symbolLength;
     }
 
-    public void setSymbolLength(Integer symbolLength) {
+    void setSymbolLength(Integer symbolLength) {
         this.symbolLength = symbolLength;
     }
 
@@ -42,7 +44,7 @@ public class Channel {
         return pauseLength;
     }
 
-    public void setPauseLength(Integer pauseLength) {
+    void setPauseLength(Integer pauseLength) {
         this.pauseLength = pauseLength;
     }
 
@@ -63,7 +65,13 @@ public class Channel {
     }
 
     public String getStreamAddress() {
-        return streamAddress;
+        try {
+            URI u = new URI(streamAddress);
+            return String.format("%s:%s", u.getHost(), u.getPort());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public String getName() {
@@ -74,23 +82,23 @@ public class Channel {
         this.name = name;
     }
 
-    public void setStreamAddress(String streamAddress) {
+    void setStreamAddress(String streamAddress) {
         this.streamAddress = streamAddress;
     }
 
-    public void setAudioPID(Integer audioPID) {
+    void setAudioPID(Integer audioPID) {
         this.audioPID = audioPID;
     }
 
-    public void setAudioFormat(String audioFormat) {
+    void setAudioFormat(String audioFormat) {
         this.audioFormat = audioFormat;
     }
 
-    public void setDtmfChannel(DTMFChannel DTMFChannel) {
+    void setDtmfChannel(DTMFChannel DTMFChannel) {
         this.dtmfChannel = DTMFChannel;
     }
 
-    public void setAdBreak(List<AdBreak> action) {
+    void setAdBreak(List<AdBreak> action) {
         this.adBreak = action;
     }
 
@@ -98,7 +106,7 @@ public class Channel {
         return cutoffNoiseRatio;
     }
 
-    public void setCutoffNoiseRatio(Double cutoffNoiseRatio) {
+    void setCutoffNoiseRatio(Double cutoffNoiseRatio) {
         this.cutoffNoiseRatio = cutoffNoiseRatio;
     }
 
@@ -116,6 +124,20 @@ public class Channel {
 
     public void setExternalChannel(ru.amberdata.dtmf.configuration.external.Elemental.Channel externalChannel) {
         this.externalChannel = externalChannel;
+    }
+
+    public DTMFProtocol getProtocol() {
+        try {
+            URI u = new URI(streamAddress);
+            return DTMFProtocol.valueOf(u.getScheme().toUpperCase());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public enum DTMFProtocol {
+        UDP, RTP;
     }
 }
 

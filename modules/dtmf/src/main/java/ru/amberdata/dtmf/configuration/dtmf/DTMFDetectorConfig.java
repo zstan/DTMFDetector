@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <dtmfDetectorConfig>
     <channel id="100" name="vesti 24">
-        <streamAddress>127.0.0.1:1234</streamAddress>
+        <streamAddress>udp://127.0.0.1:1234</streamAddress>
         <audioPID>68</audioPID>
         <audioFormat>MPEG</audioFormat>
         <dtmfChannel>auto</dtmfChannel>
@@ -80,7 +80,7 @@ public class DTMFDetectorConfig {
         ch1.setAudioPID(68);
         ch1.setCutoffNoiseRatio(0.46);
         ch1.setDtmfChannel(DTMFChannel.auto);
-        ch1.setStreamAddress("127.0.0.1:1234");
+        ch1.setStreamAddress("udp://127.0.0.1:1234");
         ch1.setPauseLength(70);
         ch1.setSymbolLength(70);
         ch1.setId(100);
