@@ -6,7 +6,7 @@ Based on https://github.com/tino1b2be/DTMF-Decoder
 
 Features
 ================================
-* Listen TS UDP incoming stream.
+* Listen TS UDP or RTP incoming stream.
 * Detects [DTMF](https://en.wikipedia.org/wiki/Dual-tone_multi-frequency_signaling "dtmf desc") sequence labels (setting by config).
 * After detection event occur, sends POST request (setting by config).
 
@@ -16,7 +16,7 @@ Common config example:
 
 <dtmfDetectorConfig>
     <channel id="100" name="vesti 24">
-        <streamAddress>127.0.0.1:1234</streamAddress>
+        <streamAddress>rtp://127.0.0.1:1234</streamAddress>
         <audioPID>69</audioPID>
         <audioFormat>MPEG</audioFormat>
         <dtmfChannel>auto</dtmfChannel>
