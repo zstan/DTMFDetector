@@ -1,3 +1,9 @@
+dtmfdetector (0.5.0) unstable; urgency=medium
+
+  * rtp protocol support
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Mon, 15 May 2017 20:21:27 +0300
+
 dtmfdetector (0.4.1) unstable; urgency=medium
 
   * correct label duration config

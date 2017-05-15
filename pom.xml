@@ -82,7 +82,7 @@
 
     						<archive>
        							<manifest>
-       								<mainClass>ru.amberdata.dtmf.DtmfRunner</mainClass>
+       								<mainClass>ru.amberdata.dtmf.DTMFRunner</mainClass>
        							</manifest>
     						</archive>
 

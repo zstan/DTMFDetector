@@ -4,8 +4,6 @@ import java.lang.*;
 import java.net.*;
 import java.util.*;
 
-import java.net.RTP.*;
-
 
 /**
 *   This class encapsulates the functionality to construct and send out an RTCP Packet. This

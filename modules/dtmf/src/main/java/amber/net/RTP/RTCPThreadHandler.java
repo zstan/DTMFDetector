@@ -2,7 +2,6 @@ package amber.net.RTP;
 
 import java.net.*;
 
-import java.net.RTP.*;
 
 /**
     *   This class creates and starts the RTCP sender and receiver threads
