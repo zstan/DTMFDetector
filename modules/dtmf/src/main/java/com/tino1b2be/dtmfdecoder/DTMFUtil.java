@@ -70,7 +70,7 @@ public class DTMFUtil {
 	public static boolean goertzel = false;
 
 	private static final double CUT_OFF_POWER = 0.004;
-	private double FftCutoffPowerNoiseRatio = 0.40;//0.46;
+	private double FftCutoffPowerNoiseRatio = 0.42;//0.46;
 	private static final double FFT_FRAME_DURATION = 0.030;
 	private static final double GOERTZEL_CUT_OFF_POWER_NOISE_RATIO = 0.87;
 	private static final double GOERTZEL_FRAME_DURATION = 0.045;
@@ -1563,7 +1563,7 @@ public class DTMFUtil {
             ++framesCount;
             int len = Math.max(seq2[0].length(), seq2[1].length());
 
-			logger.debug("onLabelReact " + len + " " + framesCount + " " + framesCount * getMillisecondsPerFrame());
+			//logger.debug("onLabelReact " + len + " " + framesCount + " " + framesCount * getMillisecondsPerFrame());
 
 			int stuff_len = 30; // additional latency label_len(100) + pause_len(50) == 170 sometimes
 
@@ -1585,7 +1585,10 @@ public class DTMFUtil {
     private boolean onLabelReact(String seq2) {
         if (!seq2.isEmpty()) {
             ++framesCount;
-            if (framesCount * getMillisecondsPerFrame() > getLabelPauseDurr() * 4) {
+
+			int stuff_len = 30; // additional latency label_len(100) + pause_len(50) == 170 sometimes
+
+            if (framesCount * getMillisecondsPerFrame() > (getLabelPauseDurr() + getSymbolLength() + stuff_len) * seq2.length()) {
                 framesCount = 0;
                 labelReact(seq2);
                 return true;

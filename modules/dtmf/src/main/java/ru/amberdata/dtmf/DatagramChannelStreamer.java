@@ -33,16 +33,11 @@ public class DatagramChannelStreamer implements Runnable {
 
         logger.info( "The server is ready..." );
 
-        for (Channel ch : context.getDtmfConfig().getChannel()) { // todo: new thread chain
+        for (Channel ch : context.getDtmfConfig().getChannel()) {
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
-            ByteBuffer buf;
-
-            //if (ch.getProtocol() == Channel.DTMFProtocol.UDP)
-                buf = ByteBuffer.allocate(188_000);
-            //else
-            //    buf = ByteBuffer.allocate(200_0);
+            ByteBuffer buf = ByteBuffer.allocate(188_000);
 
             SeekableByteChannel source = null;
 
@@ -53,7 +48,6 @@ public class DatagramChannelStreamer implements Runnable {
 
             PipedOutputStream pipedOutput = new PipedOutputStream();
             PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, buf.limit() * 100);
-            //WritableByteChannel pipedChannel = Channels.newChannel(pipedOutput);
 
             ChannelManager chManager = new ChannelManager(ch, this.context);
             Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), chManager), "Demuxer");
@@ -61,14 +55,15 @@ public class DatagramChannelStreamer implements Runnable {
 
             while (source.read(buf) != -1) {
                 buf.flip();
-                byte[] bb = new byte[buf.limit()];
+                byte[] bb = new byte[buf.remaining()];
                 System.arraycopy(buf.array(), 0, bb, 0, bb.length);
                 pipedOutput.write(bb);
-                //pipedChannel.write(buf);
+
+                while (pipedInputStream.available() > (buf.limit() * 100) - 188_000)
+                    Thread.sleep(500);
             }
             demuxerThread.interrupt();
             pipedOutput.close();
-            //pipedChannel.close();
         }
     }
 

@@ -1,3 +1,9 @@
+dtmfdetector (0.5.1) unstable; urgency=medium
+
+  * code clearing
+
+ -- zstan <zstan@zstan-ThinkPad-X1-Carbon>  Mon, 16 May 2017 20:21:27 +0300
+
 dtmfdetector (0.5.0) unstable; urgency=medium
 
   * rtp protocol support
