@@ -22,6 +22,7 @@ public class DatagramChannelStreamer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(DatagramChannelStreamer.class);
     private final DTMFContext context;
+    private final static int STREAM_BUFFER_SIZE = 188_000;
 
     public DatagramChannelStreamer(DTMFContext ctx) {
         this.context = ctx;
@@ -37,7 +38,7 @@ public class DatagramChannelStreamer implements Runnable {
             InetSocketAddress iAddr = initializeAddress(ch.getStreamAddress());
             logger.info("start listening on: " + iAddr);
 
-            ByteBuffer buf = ByteBuffer.allocate(188_000);
+            ByteBuffer buf = ByteBuffer.allocate(STREAM_BUFFER_SIZE);
 
             SeekableByteChannel source = null;
 
@@ -47,21 +48,30 @@ public class DatagramChannelStreamer implements Runnable {
             //UDPInputStream source = new UDPInputStream(iAddr);
 
             PipedOutputStream pipedOutput = new PipedOutputStream();
-            PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, buf.limit() * 100);
+            PipedInputStream pipedInputStream = new PipedInputStream(pipedOutput, STREAM_BUFFER_SIZE * 100);
 
             ChannelManager chManager = new ChannelManager(ch, this.context);
             Thread demuxerThread = new Thread(new Demuxer(readableFileChannel(pipedInputStream), chManager), "Demuxer");
             demuxerThread.start();
 
+            byte[] bOut = null;
+
             while (source.read(buf) != -1) {
                 buf.flip();
-                byte[] bb = new byte[buf.remaining()];
-                System.arraycopy(buf.array(), 0, bb, 0, bb.length);
-                pipedOutput.write(bb);
 
-                while (pipedInputStream.available() > (buf.limit() * 100) - 188_000)
+                if (bOut == null || bOut.length != buf.remaining())
+                    bOut = new byte[buf.remaining()];
+
+                System.arraycopy(buf.array(), 0, bOut, 0, bOut.length);
+                pipedOutput.write(bOut);
+
+                while (pipedInputStream.available() > (STREAM_BUFFER_SIZE - 1) * 100) {
                     Thread.sleep(500);
+                    logger.warn("pipedOutput near overflow ... sleep");
+                }
             }
+            logger.info("no more data in the source");
+            
             demuxerThread.interrupt();
             pipedOutput.close();
         }
