@@ -59,8 +59,8 @@ public class DatagramChannelStreamer implements Runnable {
                 System.arraycopy(buf.array(), 0, bb, 0, bb.length);
                 pipedOutput.write(bb);
 
-                while (pipedInputStream.available() > (buf.limit() * 100) - 188_000)
-                    Thread.sleep(500);
+                //while (pipedInputStream.available() > (buf.limit() * 100) - 188_000)
+                //    Thread.sleep(500);
             }
             demuxerThread.interrupt();
             pipedOutput.close();

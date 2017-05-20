@@ -55,10 +55,6 @@ public class DTMFUtil {
 
 	private static final Logger logger = LogManager.getLogger(DTMFUtil.class);
 
-	/**
-	 * True if the decoder is to be used in debug mode. False by default
-	 */
-
 	public static boolean debug = false;
 	private long samplesReadSum = 0;
 

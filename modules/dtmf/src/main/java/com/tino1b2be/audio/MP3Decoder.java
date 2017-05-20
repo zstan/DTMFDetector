@@ -11,6 +11,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tritonus.share.TDebug;
 import org.tritonus.share.sampled.FloatSampleBuffer;
 import org.tritonus.share.sampled.file.TAudioFileReader;
@@ -34,22 +36,21 @@ public class MP3Decoder
 	private FloatSampleBuffer buffer;
 	private byte[] bytes;
 	private InputStream pipedStream;
+	private static final Logger logger = LogManager.getLogger(MP3Decoder.class);
 	
 	public MP3Decoder( InputStream stream ) throws UnsupportedAudioFileException, IOException
 	{
 		pipedStream = stream;
-		//InputStream in = new BufferedInputStream( stream, 1024*1024 );
-		//this.setIn(new MP3AudioFileReader( ).getAudioInputStream( in ));
 		this.setIn(new MP3AudioFileReader( ).getAudioInputStream( stream ));
 		AudioFormat baseFormat = this.getIn().getFormat();
-        System.out.println("sample format: " + this.getIn().getFormat());
-        System.out.println("sample rate: " + baseFormat.getSampleRate());
+        logger.info("sample format: " + this.getIn().getFormat());
+		logger.info("sample rate: " + baseFormat.getSampleRate());
 		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											baseFormat.getSampleRate(), 16,
 											baseFormat.getChannels(),
 											baseFormat.getChannels() * 2,
 											baseFormat.getSampleRate(), false);
-		System.out.println("SampleRate: " + baseFormat.getSampleRate());
+
 		this.setIn(AudioSystem.getAudioInputStream(format, this.getIn()));
 		// TODO might need to close "in"
 	}
@@ -87,7 +88,7 @@ public class MP3Decoder
 		int frameCount = bytes.length / getIn().getFormat().getFrameSize();
 		buffer.setSamplesFromBytes(bytes, 0, getIn().getFormat(), 0, frameCount);
 		
-		for( int i = 0; i <buffer.getSampleCount(); i++ )
+		for (int i = 0; i < buffer.getSampleCount(); i++)
 		{						
 			if( buffer.getChannelCount() == 2 )
 				samples[i] = (buffer.getChannel(0)[i] + buffer.getChannel(1)[i]) / 2;
@@ -107,39 +108,17 @@ public class MP3Decoder
 			bytes = new byte[buffer.getByteArrayBufferSize( getIn().getFormat() )];
 		}
 			
-		int read = 0;
 		int readBytes = 0;
 		try {
-			while (pipedStream.available() < 2*(bytes.length - read) /*&& getIn().available() < (bytes.length - read)*/) {
-			    //System.err.println("getIn().available() < : " + getIn().available() + " need: " + (bytes.length - read) + " pipedStream " + pipedStream.available());
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-			//System.err.println("readSamples: " + (bytes.length - read));
-			//try {
-				readBytes = getIn().read(bytes, read, bytes.length - read);
-			//} catch (ArrayIndexOutOfBoundsException e) {
-
-			//}
+            while (readBytes != -1 && readBytes != bytes.length) {
+				readBytes += getIn().read(bytes, readBytes, bytes.length - readBytes);
+			}
 		} catch (IOException e) {
 			return 0;
 		}
+
 		if( readBytes == -1 )
 			return 0;
-		
-		read += readBytes;
-		while( readBytes != -1 && read != bytes.length )
-		{
-			try {
-				readBytes = getIn().read( bytes, read, bytes.length - read );
-			} catch (IOException e) {
-				return 0;
-			}
-			read += readBytes;
-		}	
 		
 		int frameCount = bytes.length / getIn().getFormat().getFrameSize();
 		buffer.setSamplesFromBytes(bytes, 0, getIn().getFormat(), 0, frameCount);
