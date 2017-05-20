@@ -69,7 +69,6 @@ public class DatagramChannelStreamer implements Runnable {
                     Thread.sleep(500);
                     logger.warn("pipedOutput near overflow ... sleep");
                 }
->>>>>>> 4eb57d4a2b54fc3d61a2f30ef145883e86285a0e
             }
             logger.info("no more data in the source");
             
